@@ -1,15 +1,16 @@
-export default class RegularHexagon {
+export class RegularHexagon {
   color: number;
   points: number[][];
-  x: number;
-  y: number;
+  x!: number;
+  y!: number;
 
   constructor(x: number, y: number, sideLength: number, color: number) {
     this.color = color;
     this.points = RegularHexagon.calculateVertices(x, y, sideLength);
   }
 
-  static calculateVertices(x: number, y: number, sideLength: number) : number[][] {
+  static calculateVertices(x: number, y: number, sideLength: number):
+      number[][] {
     // For now, the top left will be the "anchor point", x, y
     const vertices = [[x, y]];
     const sideLengthRoot3 = sideLength * Math.sqrt(3);
@@ -24,7 +25,7 @@ export default class RegularHexagon {
     return vertices;
   }
 
-  addToScene(scene: Phaser.Scene) : Phaser.GameObjects.Polygon {
+  addToScene(scene: Phaser.Scene): Phaser.GameObjects.Polygon {
     return scene.add.polygon(this.x, this.y, this.points, this.color);
   }
 }
