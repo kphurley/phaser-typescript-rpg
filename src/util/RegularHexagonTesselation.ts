@@ -42,9 +42,9 @@ export class RegularHexagonTesselation {
   }
 
   addToScene(scene: Phaser.Scene, polygons: RegularHexagon[]):
-      Phaser.GameObjects.Polygon[] {
+      Phaser.GameObjects.Sprite[] {
     return polygons.map((polygon) => {
-      return polygon.addToScene(scene).setStrokeStyle(2, 0x777777, 1);
+      return polygon.addToScene(scene);
     });
   }
 }
