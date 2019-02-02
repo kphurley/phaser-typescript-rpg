@@ -25,20 +25,20 @@ export class RegularHexagon {
     return vertices;
   }
 
-  createPolygon() : Phaser.Geom.Polygon {
-    const geomPoints = this.points.map((p) => new Phaser.Geom.Point(p[0], p[1]));
+  createPolygon(): Phaser.Geom.Polygon {
+    const geomPoints =
+        this.points.map((p) => new Phaser.Geom.Point(p[0], p[1]));
     return new Phaser.Geom.Polygon(geomPoints);
   }
 
-  createHexagonTexture(scene: Phaser.Scene) : void {
+  createHexagonTexture(scene: Phaser.Scene): void {
     const polygon = this.createPolygon();
-    const graphics = scene.add.graphics({ x: 0, y: 0 });
+    const graphics = scene.add.graphics({x: 0, y: 0});
     graphics.lineStyle(2, 0x00aa00);
     graphics.beginPath();
     graphics.moveTo(polygon.points[0].x, polygon.points[0].y);
-    for (let i = 1; i < polygon.points.length; i++)
-    {
-        graphics.lineTo(polygon.points[i].x, polygon.points[i].y);
+    for (let i = 1; i < polygon.points.length; i++) {
+      graphics.lineTo(polygon.points[i].x, polygon.points[i].y);
     }
 
     graphics.closePath();
@@ -51,7 +51,8 @@ export class RegularHexagon {
     if (!scene.textures.exists('hexagon')) {
       this.createHexagonTexture(scene);
     }
-    
-    return scene.add.sprite(400 + this.points[0][0], 100 + this.points[0][1], 'hexagon');
+
+    return scene.add.sprite(
+        400 + this.points[0][0], 100 + this.points[0][1], 'hexagon');
   }
 }
