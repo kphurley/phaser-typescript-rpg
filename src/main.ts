@@ -1,6 +1,5 @@
 import 'phaser';
 
-import {HexagonGridPlugin} from './plugins/HexagonGridPlugin';
 import {TestScene} from './scenes/TestScene';
 
 const config: GameConfig = {
@@ -10,11 +9,7 @@ const config: GameConfig = {
   height: 720,
   resolution: 1,
   backgroundColor: '#EDEEC9',
-  scene: [TestScene],
-  plugins: {
-    global:
-        [{key: 'HexagonGridPlugin', plugin: HexagonGridPlugin, start: true}]
-  }
+  scene: [TestScene]
 };
 
 const game = new Phaser.Game(config);

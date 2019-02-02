@@ -10,6 +10,7 @@ export class TestScene extends Phaser.Scene {
 
   preload() {
     this.load.image('hexagon', 'assets/sprites/Hexagon_64_55.png');
+    this.load.image('test_kenney', 'assets/sprites/hexagon-pack/PNG/Tiles/Terrain/Stone/stone_10.png');
   }
 
   create() {
@@ -22,20 +23,22 @@ export class TestScene extends Phaser.Scene {
 
     this.input.on('pointermove', updateText);
 
-    const size = 10;
-    const sideLength = 31;  // Constant. based on image size
+    const height = 4;
+    const width = 8;
+    const sideLength = 69;  // Constant. based on image size
     const sideLengthRoot3 = Math.floor(sideLength * Math.sqrt(3));  // Constant
 
     // Start position of tesselation, assumes start at top left (probably should
     // refactor to center)
-    const x = 50;
-    const y = 50;
+    const x = 100;
+    const y = 100;
 
-    for (let yDelta = 0; yDelta < size * sideLengthRoot3;
-         yDelta += sideLengthRoot3) {
-      for (let xDelta = 0; xDelta < size / 2 * 3 * sideLength;
-           xDelta += 3 * sideLength) {
-        const hexagon = this.add.sprite(x + xDelta, y + yDelta, 'hexagon');
+    // "Even rows"
+    for (let yDelta = 0; yDelta < height * 2 * sideLength;
+          yDelta += 3 * sideLength) {
+      for (let xDelta = 0; xDelta < width * sideLengthRoot3;
+            xDelta += sideLengthRoot3) {
+        const hexagon = this.add.sprite(x + xDelta, y + yDelta, 'test_kenney');
         hexagon.setInteractive();
         hexagon.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
           console.log('clicked polygon', hexagon.x, hexagon.y);
@@ -46,15 +49,16 @@ export class TestScene extends Phaser.Scene {
 
     // Thought - provide accessor methods for coordinates instead of a
     // hard-coded index?
-    const nextRowStartCoords = [x + 46, y + 26];
+    const nextRowStartCoords = [x + sideLengthRoot3 / 2, y + sideLengthRoot3 - 14];
 
-    for (let yDelta = 0; yDelta < size * sideLengthRoot3;
-         yDelta += sideLengthRoot3) {
-      for (let xDelta = 0; xDelta < size / 2 * 3 * sideLength;
-           xDelta += 3 * sideLength) {
+    // "Odd rows"
+    for (let yDelta = 0; yDelta < height * 2 * sideLength;
+        yDelta += 3 * sideLength) {
+      for (let xDelta = 0; xDelta < width * sideLengthRoot3;
+          xDelta += sideLengthRoot3) {
         const hexagon = this.add.sprite(
             nextRowStartCoords[0] + xDelta, nextRowStartCoords[1] + yDelta,
-            'hexagon');
+            'test_kenney');
         hexagon.setInteractive();
         hexagon.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
           console.log('clicked polygon', hexagon.x, hexagon.y);
