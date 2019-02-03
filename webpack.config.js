@@ -75,7 +75,7 @@ module.exports = {
         tls: 'empty'
     },
     resolve: {
-        extensions: ['.ts', '.js'],
+        extensions: ['.ts', '.js', '.json'],
         alias: {
             'phaser': phaser,
         }

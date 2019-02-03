@@ -6,7 +6,10 @@
       "dom"
     ],
     "rootDir": ".",
-    "outDir": "build"
+    "outDir": "build",
+    "module": "commonjs",
+    "resolveJsonModule": true,
+    "esModuleInterop": true
   },
   "include": [
     "node_modules/**/*.js",

@@ -1,4 +1,5 @@
-import {RegularHexagonTesselation} from '../util/RegularHexagonTesselation';
+import {HexagonGrid} from '../util/HexagonGrid';
+import {HexagonGridCell} from '../util/HexagonGridCell';
 
 export class TestScene extends Phaser.Scene {
   polygons!: Phaser.GameObjects.Sprite[];
@@ -9,63 +10,41 @@ export class TestScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image('hexagon', 'assets/sprites/Hexagon_64_55.png');
-    this.load.image('test_kenney', 'assets/sprites/hexagon-pack/PNG/Tiles/Terrain/Stone/stone_10.png');
+    this.load.image('test_kenney', 'assets/sprites/dirt_08.png');
   }
 
   create() {
     this.text =
         this.add.text(100, 600, '', {fontSize: '20px', fill: '#000000'});
 
-    const updateText = (pointer: Phaser.Input.Pointer) => {
-      this.text.setText('Pointer is at: (' + pointer.x + ',' + pointer.y + ')');
+    const hexagonGrid = new HexagonGrid({x: 100, y: 100, height: 5, width: 9});
+
+    const addInteractions = (spriteCells: Phaser.GameObjects.Sprite[]) => {
+      spriteCells.forEach((sprite: Phaser.GameObjects.Sprite) => {
+        sprite.setInteractive();
+        sprite.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
+          this.text.setText([
+            'Sprite pixels: (' + sprite.x + ',' + sprite.y + ')',
+            'Sprite offset: ' + sprite.getData('offsetLocation')
+          ]);
+        });
+      });
     };
 
-    this.input.on('pointermove', updateText);
+    hexagonGrid.cells.forEach((cellRow: HexagonGridCell[]) => {
+      const spriteCells: Phaser.GameObjects.Sprite[] = [];
 
-    const height = 4;
-    const width = 8;
-    const sideLength = 69;  // Constant. based on image size
-    const sideLengthRoot3 = Math.floor(sideLength * Math.sqrt(3));  // Constant
+      cellRow.forEach((cell: HexagonGridCell) => {
+        const {offsetLocation, pixelLocation, spriteKey} = cell;
+        const sprite =
+            this.add.sprite(pixelLocation.x, pixelLocation.y, spriteKey);
+        sprite.setData(
+            'offsetLocation', `(${offsetLocation.x},${offsetLocation.y})`);
+        spriteCells.push(sprite);
 
-    // Start position of tesselation, assumes start at top left (probably should
-    // refactor to center)
-    const x = 100;
-    const y = 100;
-
-    // "Even rows"
-    for (let yDelta = 0; yDelta < height * 2 * sideLength;
-          yDelta += 3 * sideLength) {
-      for (let xDelta = 0; xDelta < width * sideLengthRoot3;
-            xDelta += sideLengthRoot3) {
-        const hexagon = this.add.sprite(x + xDelta, y + yDelta, 'test_kenney');
-        hexagon.setInteractive();
-        hexagon.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
-          console.log('clicked polygon', hexagon.x, hexagon.y);
-          console.log('pointer', hexagon.x, hexagon.y);
-        });
-      }
-    }
-
-    // Thought - provide accessor methods for coordinates instead of a
-    // hard-coded index?
-    const nextRowStartCoords = [x + sideLengthRoot3 / 2, y + sideLengthRoot3 - 14];
-
-    // "Odd rows"
-    for (let yDelta = 0; yDelta < height * 2 * sideLength;
-        yDelta += 3 * sideLength) {
-      for (let xDelta = 0; xDelta < width * sideLengthRoot3;
-          xDelta += sideLengthRoot3) {
-        const hexagon = this.add.sprite(
-            nextRowStartCoords[0] + xDelta, nextRowStartCoords[1] + yDelta,
-            'test_kenney');
-        hexagon.setInteractive();
-        hexagon.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
-          console.log('clicked polygon', hexagon.x, hexagon.y);
-          console.log('pointer', hexagon.x, hexagon.y);
-        });
-      }
-    }
+        addInteractions(spriteCells);
+      });
+    });
   }
 
   update(time: number, delta: number) {}
