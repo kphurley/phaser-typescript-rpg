@@ -1,0 +1,51 @@
+import {HexagonGridCell} from './HexagonGridCell';
+
+import config from './hexagonGridConfig.json';
+
+// NOTE:  This is the motherlode for what we're trying to accomplish here:
+// https://www.redblobgames.com/grids/hexagons/
+
+const SIDE_LENGTH = config.sideLength;
+const SIDE_LENGTH_ROOT_3 = SIDE_LENGTH * Math.sqrt(3);
+
+export class HexagonGrid {
+  options: {x: number, y: number, height: number; width: number;};
+  cells: HexagonGridCell[][];
+
+  constructor(options: {x: number, y: number, height: number; width: number;}) {
+    this.options = options;
+    this.cells = [];
+    this.createGrid();
+  }
+
+  // Start position of grid is (x, y) in pixels
+  // assumes start at center of top left hex, pointy hexes, rectangular layout
+  createGrid(): void {
+    const {height, width} = this.options;
+
+    for (let yIdx = 0; yIdx < height; yIdx++) {
+      if (!this.cells[yIdx]) {
+        this.cells[yIdx] = [];
+      }
+
+      for (let xIdx = 0; xIdx < width; xIdx++) {
+        this.cells[yIdx][xIdx] = new HexagonGridCell(
+            {x: xIdx, y: yIdx}, this.offsetToPixel(xIdx, yIdx), 'test_kenney',
+            undefined);
+      }
+    }
+  }
+
+  offsetToPixel(xCoord: number, yCoord: number): {x: number, y: number} {
+    const {x, y} = this.options;
+    const isEven = (y: number) => y % 2 === 0;
+
+    return {
+      // TODO - Clean these calculations up
+      x: isEven(yCoord) ?
+          x + xCoord * SIDE_LENGTH_ROOT_3 :
+          x + SIDE_LENGTH_ROOT_3 / 2 + xCoord * SIDE_LENGTH_ROOT_3,
+      y: y + yCoord * 2 * SIDE_LENGTH - (yCoord * SIDE_LENGTH / 2)
+    };
+  }
+}
