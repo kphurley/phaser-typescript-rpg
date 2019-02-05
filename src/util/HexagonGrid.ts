@@ -12,7 +12,7 @@ export class HexagonGrid {
   options: {x: number, y: number, height: number; width: number;};
 
   // Storage of the cells - Key is the axial coordinates of the cell
-  cellMap: Map<[number, number], HexagonGridCell>;
+  cellMap: Map<string, HexagonGridCell>;
 
   constructor(options: {x: number, y: number, height: number; width: number;}) {
     this.options = options;
@@ -27,20 +27,22 @@ export class HexagonGrid {
 
     for (let yIdx = 0; yIdx < height; yIdx++) {
       for (let xIdx = 0; xIdx < width; xIdx++) {
-        const [axialQ, _, axialR] = this.offsetToCube(xIdx, yIdx);
+        const [axialQ, _, axialR] = HexagonGrid.offsetToCube(xIdx, yIdx);
         this.cellMap.set(
-            [axialQ, axialR],
+            `${axialQ},${axialR}`,
             new HexagonGridCell(
                 {q: axialQ, r: axialR}, {col: xIdx, row: yIdx},
-                this.offsetToPixel(xIdx, yIdx),
+                HexagonGrid.offsetToPixel(xIdx, yIdx, this.options),
                 'test_kenney',  // TODO - Extract to config
-                undefined));
+                this, undefined));
       }
     }
   }
 
-  offsetToPixel(xCoord: number, yCoord: number): {x: number, y: number} {
-    const {x, y} = this.options;
+  static offsetToPixel(xCoord: number, yCoord: number, options: {
+    x: number, y: number, height: number; width: number;
+  }): {x: number, y: number} {
+    const {x, y} = options;
     const isEven = (y: number) => y % 2 === 0;
 
     return {
@@ -52,7 +54,8 @@ export class HexagonGrid {
     };
   }
 
-  offsetToCube(xCoord: number, yCoord: number): [number, number, number] {
+  static offsetToCube(xCoord: number, yCoord: number):
+      [number, number, number] {
     const x = xCoord - (yCoord - (yCoord & 1)) / 2;
     const z = yCoord;
     const y = -x - z;
