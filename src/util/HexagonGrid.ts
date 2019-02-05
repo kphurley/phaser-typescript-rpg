@@ -27,13 +27,14 @@ export class HexagonGrid {
 
     for (let yIdx = 0; yIdx < height; yIdx++) {
       for (let xIdx = 0; xIdx < width; xIdx++) {
-        const [ axialQ, _, axialR ] = this.offsetToCube(xIdx, yIdx);
-        this.cellMap.set([ axialQ, axialR ], new HexagonGridCell(
-          {q: axialQ, r: axialR},
-          {col: xIdx, row: yIdx},
-          this.offsetToPixel(xIdx, yIdx), 
-          'test_kenney',  // TODO - Extract to config
-          undefined));
+        const [axialQ, _, axialR] = this.offsetToCube(xIdx, yIdx);
+        this.cellMap.set(
+            [axialQ, axialR],
+            new HexagonGridCell(
+                {q: axialQ, r: axialR}, {col: xIdx, row: yIdx},
+                this.offsetToPixel(xIdx, yIdx),
+                'test_kenney',  // TODO - Extract to config
+                undefined));
       }
     }
   }
