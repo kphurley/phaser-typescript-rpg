@@ -10,41 +10,43 @@ export class TestScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image('test_kenney', 'assets/sprites/dirt_08.png');
+    this.load.image('test_kenney', 'assets/sprites/dirt_08_60x70.png');
   }
 
   create() {
     this.text =
         this.add.text(100, 600, '', {fontSize: '20px', fill: '#000000'});
 
-    const hexagonGrid = new HexagonGrid({x: 100, y: 100, height: 5, width: 9});
+    const hexagonGrid =
+        new HexagonGrid({x: 200, y: 100, height: 10, width: 15});
 
-    const addInteractions = (spriteCells: Phaser.GameObjects.Sprite[]) => {
-      spriteCells.forEach((sprite: Phaser.GameObjects.Sprite) => {
-        sprite.setInteractive();
-        sprite.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
-          this.text.setText([
-            'Sprite pixels: (' + sprite.x + ',' + sprite.y + ')',
-            'Sprite offset: ' + sprite.getData('offsetLocation')
-          ]);
-        });
+    // These are really just for debugging, we can remove when we're confident
+    // this all works
+    const addInteractions = (sprite: Phaser.GameObjects.Sprite) => {
+      sprite.setInteractive();
+      sprite.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
+        this.text.setText([
+          'Sprite pixels: (' + sprite.x + ',' + sprite.y + ')',
+          'Sprite offset: ' + sprite.getData('offsetLocation'),
+          'Sprite axial: ' + sprite.getData('axialLocation')
+        ]);
       });
     };
 
-    hexagonGrid.cells.forEach((cellRow: HexagonGridCell[]) => {
-      const spriteCells: Phaser.GameObjects.Sprite[] = [];
+    //
+    for (const [_, hexagonGridCell] of hexagonGrid.cellMap) {
+      const {axialLocation, offsetLocation, pixelLocation, spriteKey} =
+          hexagonGridCell;
+      const sprite =
+          this.add.sprite(pixelLocation.x, pixelLocation.y, spriteKey);
+      sprite.setData(
+          'offsetLocation', `(${offsetLocation.col},${offsetLocation.row})`);
+      sprite.setData(
+          'axialLocation', `(q = ${axialLocation.q}, r = ${axialLocation.r})`);
 
-      cellRow.forEach((cell: HexagonGridCell) => {
-        const {offsetLocation, pixelLocation, spriteKey} = cell;
-        const sprite =
-            this.add.sprite(pixelLocation.x, pixelLocation.y, spriteKey);
-        sprite.setData(
-            'offsetLocation', `(${offsetLocation.x},${offsetLocation.y})`);
-        spriteCells.push(sprite);
-
-        addInteractions(spriteCells);
-      });
-    });
+      // TODO - Do we need this now?
+      addInteractions(sprite);
+    }
   }
 
   update(time: number, delta: number) {}

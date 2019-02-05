@@ -1,13 +1,16 @@
 export class HexagonGridCell {
-  offsetLocation: {x: number, y: number};
+  axialLocation: {q: number, r: number};
+  offsetLocation: {col: number, row: number};
   pixelLocation: {x: number, y: number};
   spriteKey: string;
   contents?: Entity;
 
   constructor(
-      offsetLocation: {x: number, y: number},
+      axialLocation: {q: number, r: number},
+      offsetLocation: {col: number, row: number},
       pixelLocation: {x: number, y: number}, spriteKey: string,
       contents?: Entity) {
+    this.axialLocation = axialLocation;
     this.offsetLocation = offsetLocation;
     this.pixelLocation = pixelLocation;
     this.spriteKey = spriteKey;
