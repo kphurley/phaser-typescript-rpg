@@ -10,11 +10,13 @@ const SIDE_LENGTH_ROOT_3 = SIDE_LENGTH * Math.sqrt(3);
 
 export class HexagonGrid {
   options: {x: number, y: number, height: number; width: number;};
-  cells: HexagonGridCell[][];
+
+  // Storage of the cells - Key is the axial coordinates of the cell
+  cellMap: Map<[number, number], HexagonGridCell>;
 
   constructor(options: {x: number, y: number, height: number; width: number;}) {
     this.options = options;
-    this.cells = [];
+    this.cellMap = new Map();
     this.createGrid();
   }
 
@@ -24,14 +26,14 @@ export class HexagonGrid {
     const {height, width} = this.options;
 
     for (let yIdx = 0; yIdx < height; yIdx++) {
-      if (!this.cells[yIdx]) {
-        this.cells[yIdx] = [];
-      }
-
       for (let xIdx = 0; xIdx < width; xIdx++) {
-        this.cells[yIdx][xIdx] = new HexagonGridCell(
-            {x: xIdx, y: yIdx}, this.offsetToPixel(xIdx, yIdx), 'test_kenney',
-            undefined);
+        const [ axialQ, _, axialR ] = this.offsetToCube(xIdx, yIdx);
+        this.cellMap.set([ axialQ, axialR ], new HexagonGridCell(
+          {q: axialQ, r: axialR},
+          {col: xIdx, row: yIdx},
+          this.offsetToPixel(xIdx, yIdx), 
+          'test_kenney',  // TODO - Extract to config
+          undefined));
       }
     }
   }
@@ -47,5 +49,13 @@ export class HexagonGrid {
           x + SIDE_LENGTH_ROOT_3 / 2 + xCoord * SIDE_LENGTH_ROOT_3,
       y: y + yCoord * 2 * SIDE_LENGTH - (yCoord * SIDE_LENGTH / 2)
     };
+  }
+
+  offsetToCube(xCoord: number, yCoord: number): [number, number, number] {
+    const x = xCoord - (yCoord - (yCoord & 1)) / 2;
+    const z = yCoord;
+    const y = -x - z;
+
+    return [x, y, z];
   }
 }
