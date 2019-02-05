@@ -26,7 +26,8 @@ export class TestScene extends Phaser.Scene {
 
     const renderNeighbors = (hexCells: HexagonGridCell[]) => {
       hexCells.forEach((cell) => {
-        spriteNeighbors.push(this.add.sprite(cell.pixelLocation.x, cell.pixelLocation.y, 'slime'));
+        spriteNeighbors.push(this.add.sprite(
+            cell.pixelLocation.x, cell.pixelLocation.y, 'slime'));
       });
     };
 
@@ -43,8 +44,7 @@ export class TestScene extends Phaser.Scene {
 
     //
     for (const [_, hexagonGridCell] of hexagonGrid.cellMap) {
-      const {pixelLocation, spriteKey} =
-          hexagonGridCell;
+      const {pixelLocation, spriteKey} = hexagonGridCell;
       const sprite =
           this.add.sprite(pixelLocation.x, pixelLocation.y, spriteKey);
       sprite.setData('cellData', hexagonGridCell);

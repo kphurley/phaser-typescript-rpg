@@ -34,13 +34,14 @@ export class HexagonGrid {
                 {q: axialQ, r: axialR}, {col: xIdx, row: yIdx},
                 HexagonGrid.offsetToPixel(xIdx, yIdx, this.options),
                 'test_kenney',  // TODO - Extract to config
-                this,
-                undefined));
+                this, undefined));
       }
     }
   }
 
-  static offsetToPixel(xCoord: number, yCoord: number, options: {x: number, y: number, height: number; width: number;}): {x: number, y: number} {
+  static offsetToPixel(xCoord: number, yCoord: number, options: {
+    x: number, y: number, height: number; width: number;
+  }): {x: number, y: number} {
     const {x, y} = options;
     const isEven = (y: number) => y % 2 === 0;
 
@@ -53,7 +54,8 @@ export class HexagonGrid {
     };
   }
 
-  static offsetToCube(xCoord: number, yCoord: number): [number, number, number] {
+  static offsetToCube(xCoord: number, yCoord: number):
+      [number, number, number] {
     const x = xCoord - (yCoord - (yCoord & 1)) / 2;
     const z = yCoord;
     const y = -x - z;

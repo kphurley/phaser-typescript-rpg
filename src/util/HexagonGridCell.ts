@@ -1,4 +1,4 @@
-import { HexagonGrid } from "./HexagonGrid";
+import {HexagonGrid} from './HexagonGrid';
 
 export class HexagonGridCell {
   axialLocation: {q: number, r: number};
@@ -12,8 +12,7 @@ export class HexagonGridCell {
       axialLocation: {q: number, r: number},
       offsetLocation: {col: number, row: number},
       pixelLocation: {x: number, y: number}, spriteKey: string,
-      grid: HexagonGrid,
-      contents?: Entity) {
+      grid: HexagonGrid, contents?: Entity) {
     this.axialLocation = axialLocation;
     this.offsetLocation = offsetLocation;
     this.pixelLocation = pixelLocation;
@@ -22,16 +21,14 @@ export class HexagonGridCell {
     this.contents = contents;
   }
 
-  getNeighbors() : HexagonGridCell[] {
+  getNeighbors(): HexagonGridCell[] {
     const neighbors: HexagonGridCell[] = [];
 
-    const DIRECTIONS: Array<[number, number]> = [
-      [+1, 0], [+1, -1], [0, -1],
-      [-1, 0], [-1, +1], [0, +1]
-    ];
+    const DIRECTIONS: Array<[number, number]> =
+        [[+1, 0], [+1, -1], [0, -1], [-1, 0], [-1, +1], [0, +1]];
 
-    const hexNeighbor = (dir: [number, number]) : HexagonGridCell | undefined => {
-      const { q, r } = this.axialLocation;
+    const hexNeighbor = (dir: [number, number]): HexagonGridCell|undefined => {
+      const {q, r} = this.axialLocation;
       return this.grid.cellMap.get(`${q + dir[0]},${r + dir[1]}`);
     };
 
