@@ -21,6 +21,10 @@ export class HexagonGridCell {
     this.contents = contents;
   }
 
+  asAxialString(): string {
+    return `${this.axialLocation.q},${this.axialLocation.r}`;
+  }
+
   getNeighbors(): HexagonGridCell[] {
     const neighbors: HexagonGridCell[] = [];
 
@@ -40,5 +44,57 @@ export class HexagonGridCell {
     });
 
     return neighbors;
+  }
+
+  // Build a map of cells mapping cells to the cell they came from
+  buildCameFromMap(goalLoc: string): Map<string, string> {
+    const startLoc = this.asAxialString();
+    const cameFromMap: Map<string, string> = new Map();
+    cameFromMap.set(startLoc, 'start');
+
+    let visitedCells: string[] = [startLoc];
+
+    // BFS for goalLoc
+    while (visitedCells.length > 0) {
+      const currentLoc = visitedCells[0];
+      visitedCells = visitedCells.slice(1);
+
+      const cell =
+          this.grid.cellMap.get(currentLoc as string) as HexagonGridCell;
+
+      if (currentLoc === goalLoc) {
+        break;
+      }
+
+      const neighbors = cell.getNeighbors();
+      for (let idx = 0; idx < neighbors.length; idx++) {
+        const nextLoc = neighbors[idx].asAxialString();
+        if (!cameFromMap.has(nextLoc)) {
+          visitedCells.push(nextLoc);
+          cameFromMap.set(nextLoc, currentLoc);
+        }
+      }
+    }
+
+    return cameFromMap;
+  }
+
+  // Find the sequence of cells in the grid that form a path from this cell to
+  // goal
+  findPathToCell(goal: HexagonGridCell): HexagonGridCell[] {
+    const startLoc = this.asAxialString();
+    const goalLoc = goal.asAxialString();
+    const cameFromMap: Map<string, string> = this.buildCameFromMap(goalLoc);
+
+    let currentPathLoc = goalLoc;
+    const path = [];
+
+    while (cameFromMap.get(currentPathLoc) !== 'start') {
+      path.unshift(this.grid.cellMap.get(currentPathLoc));
+      currentPathLoc = cameFromMap.get(currentPathLoc) as string;
+    }
+
+    path.unshift(this.grid.cellMap.get(startLoc));
+    return path as HexagonGridCell[];
   }
 }
