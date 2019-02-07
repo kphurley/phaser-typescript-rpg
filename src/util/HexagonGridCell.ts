@@ -1,3 +1,4 @@
+import {Entity} from '../entities/Entity';
 import {HexagonGrid} from './HexagonGrid';
 
 export class HexagonGridCell {
@@ -6,19 +7,28 @@ export class HexagonGridCell {
   pixelLocation: {x: number, y: number};
   spriteKey: string;
   grid: HexagonGrid;
-  contents?: Entity;
+
+  private contents: Entity;
 
   constructor(
       axialLocation: {q: number, r: number},
       offsetLocation: {col: number, row: number},
       pixelLocation: {x: number, y: number}, spriteKey: string,
-      grid: HexagonGrid, contents?: Entity) {
+      grid: HexagonGrid, contents: Entity) {
     this.axialLocation = axialLocation;
     this.offsetLocation = offsetLocation;
     this.pixelLocation = pixelLocation;
     this.spriteKey = spriteKey;
     this.grid = grid;
     this.contents = contents;
+  }
+
+  setContents(entity: Entity) {
+    this.contents = entity;
+  }
+
+  isEmpty() {
+    return this.contents.isEmpty();
   }
 
   asAxialString(): string {
@@ -38,7 +48,7 @@ export class HexagonGridCell {
 
     DIRECTIONS.forEach((dir) => {
       const possibleCell = hexNeighbor(dir);
-      if (possibleCell) {
+      if (possibleCell && possibleCell.isEmpty()) {
         neighbors.push(possibleCell);
       }
     });
@@ -82,6 +92,10 @@ export class HexagonGridCell {
   // Find the sequence of cells in the grid that form a path from this cell to
   // goal
   findPathToCell(goal: HexagonGridCell): HexagonGridCell[] {
+    if (!goal.contents.isEmpty()) {
+      return [];  // Cannot find path to a non-empty cell
+    }
+
     const startLoc = this.asAxialString();
     const goalLoc = goal.asAxialString();
     const cameFromMap: Map<string, string> = this.buildCameFromMap(goalLoc);

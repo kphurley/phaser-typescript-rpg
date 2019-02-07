@@ -1,7 +1,11 @@
-class Entity {
+export abstract class Entity {
   name: string;
+  scene: Phaser.Scene;
 
-  constructor(name: string) {
+  constructor(scene: Phaser.Scene, name: string) {
     this.name = name;
+    this.scene = scene;
   }
+
+  abstract isEmpty(): boolean;
 }
