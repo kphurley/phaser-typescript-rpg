@@ -1,5 +1,7 @@
-import {HexagonGridCell} from './HexagonGridCell';
+import {EmptyEntity} from '../entities/EmptyEntity';
+import {Entity} from '../entities/Entity';
 
+import {HexagonGridCell} from './HexagonGridCell';
 import config from './hexagonGridConfig.json';
 
 // NOTE:  This is the motherlode for what we're trying to accomplish here:
@@ -9,34 +11,52 @@ const SIDE_LENGTH = config.sideLength;
 const SIDE_LENGTH_ROOT_3 = SIDE_LENGTH * Math.sqrt(3);
 
 export class HexagonGrid {
+  scene!: Phaser.Scene;
   options: {x: number, y: number, height: number; width: number;};
 
   // Storage of the cells - Key is the axial coordinates of the cell
   cellMap: Map<string, HexagonGridCell>;
 
-  constructor(options: {x: number, y: number, height: number; width: number;}) {
+  constructor(scene: Phaser.Scene, options: {
+    x: number, y: number, height: number; width: number;
+  }) {
     this.options = options;
     this.cellMap = new Map();
-    this.createGrid();
+    this.createGrid(scene);
   }
 
-  // Start position of grid is (x, y) in pixels
-  // assumes start at center of top left hex, pointy hexes, rectangular layout
-  createGrid(): void {
+  // Create a grid for parameter scene.  Start position of grid is (x, y) in
+  // pixels Assumes start at center of top left hex, pointy hexes, rectangular
+  // layout
+  createGrid(scene: Phaser.Scene): void {
     const {height, width} = this.options;
 
     for (let yIdx = 0; yIdx < height; yIdx++) {
       for (let xIdx = 0; xIdx < width; xIdx++) {
         const [axialQ, _, axialR] = HexagonGrid.offsetToCube(xIdx, yIdx);
-        this.cellMap.set(
-            `${axialQ},${axialR}`,
-            new HexagonGridCell(
-                {q: axialQ, r: axialR}, {col: xIdx, row: yIdx},
-                HexagonGrid.offsetToPixel(xIdx, yIdx, this.options),
-                'test_kenney',  // TODO - Extract to config
-                this, undefined));
+        const hexagonGridCell = new HexagonGridCell(
+            {q: axialQ, r: axialR}, {col: xIdx, row: yIdx},
+            HexagonGrid.offsetToPixel(xIdx, yIdx, this.options),
+            'test_kenney',  // TODO - Extract to config
+            this, new EmptyEntity(scene));
+
+        this.cellMap.set(hexagonGridCell.asAxialString(), hexagonGridCell);
       }
     }
+  }
+
+  assignEntityToGridLocation(entity: Entity, location: string): void {
+    if (!this.cellMap.get(location)) {
+      return;
+    }
+
+    const gridCell = this.cellMap.get(location) as HexagonGridCell;
+    gridCell.setContents(entity);
+  }
+
+  axialStringToPixelLocation(axialString: string): {x: number, y: number} {
+    const desiredCell = this.cellMap.get(axialString) as HexagonGridCell;
+    return desiredCell.pixelLocation;
   }
 
   static offsetToPixel(xCoord: number, yCoord: number, options: {

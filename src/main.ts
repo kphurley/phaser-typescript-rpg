@@ -1,6 +1,6 @@
 import 'phaser';
 
-import {TestScene} from './scenes/TestScene';
+import {GridScene} from './scenes/GridScene';
 
 const config: GameConfig = {
   type: Phaser.AUTO,
@@ -9,7 +9,7 @@ const config: GameConfig = {
   height: 720,
   resolution: 1,
   backgroundColor: '#EDEEC9',
-  scene: [TestScene]
+  scene: [GridScene]
 };
 
 const game = new Phaser.Game(config);
