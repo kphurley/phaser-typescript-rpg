@@ -92,7 +92,7 @@ export class HexagonGridCell {
   // Find the sequence of cells in the grid that form a path from this cell to
   // goal
   findPathToCell(goal: HexagonGridCell): HexagonGridCell[] {
-    if (!goal.contents.isEmpty()) {
+    if (!goal.isEmpty()) {
       return [];  // Cannot find path to a non-empty cell
     }
 
