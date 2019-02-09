@@ -7,13 +7,7 @@ export class ResolveCombatGridSceneState extends GridSceneState {
     super(scene, 'resolveCombat');
   }
 
-  // Call this to enter this state
-  // entry() {
-  // Do all modifications on scene here
-  //}
+  // entry() {}
 
-  // Call this to exit the state and trigger a transition
-  exit() {
-    // Do any state cleanup here
-  }
+  exit() {}
 }

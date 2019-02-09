@@ -19,6 +19,7 @@ export class GridScene extends Phaser.Scene {
     this.load.image('test_kenney', 'assets/sprites/dirt_08_60x70.png');
     this.load.image('slime', 'assets/sprites/slime_64.png');
     this.load.image('warrior', 'assets/sprites/warrior_64.png');
+    this.load.image('moveButton', 'assets/sprites/icons/move.png');
   }
 
   create() {
@@ -66,8 +67,12 @@ export class GridScene extends Phaser.Scene {
 
     const stateRouter = new GridSceneStateRouter(this);
 
+    const uiContainer = this.add.container(100, 650);
+    const moveButton = this.add.sprite(10, 10, 'moveButton');
+    uiContainer.add(moveButton);
+    let uiVisible = true;
+
     this.input.keyboard.on('keydown', (keyboardEvent: KeyboardEvent) => {
-      console.log(Date.now());
       switch (keyboardEvent.key) {
         case 'p':
           setTimeout(() => {
@@ -78,6 +83,10 @@ export class GridScene extends Phaser.Scene {
           setTimeout(() => {
             this.events.emit('resolveCombat');
           }, 1000);
+          break;
+        case 'u':
+          uiVisible = !uiVisible;
+          uiContainer.setVisible(uiVisible);
           break;
         default:
           return;

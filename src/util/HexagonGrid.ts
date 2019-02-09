@@ -5,9 +5,6 @@ import {GridScene} from '../scenes/GridScene';
 import {HexagonGridCell} from './HexagonGridCell';
 import config from './hexagonGridConfig.json';
 
-// NOTE:  This is the motherlode for what we're trying to accomplish here:
-// https://www.redblobgames.com/grids/hexagons/
-
 const SIDE_LENGTH = config.sideLength;
 const SIDE_LENGTH_ROOT_3 = SIDE_LENGTH * Math.sqrt(3);
 
@@ -22,13 +19,12 @@ export class HexagonGrid {
     x: number, y: number, height: number; width: number;
   }) {
     this.options = options;
-    this.cellMap =
-        new Map();  // TODO - FIX THIS, SHOULD ALLOW US NOT TO HAVE TO CAST
+    this.cellMap = new Map<string, HexagonGridCell>();
     this.createGrid(scene);
   }
 
   // Create a grid for parameter scene.  Start position of grid is (x, y) in
-  // pixels Assumes start at center of top left hex, pointy hexes, rectangular
+  // pixels. Assumes start at center of top left hex, pointy hexes, rectangular
   // layout
   createGrid(scene: GridScene): void {
     const {height, width} = this.options;
@@ -39,8 +35,7 @@ export class HexagonGrid {
         const hexagonGridCell = new HexagonGridCell(
             {q: axialQ, r: axialR}, {col: xIdx, row: yIdx},
             HexagonGrid.offsetToPixel(xIdx, yIdx, this.options),
-            'test_kenney',  // TODO - Extract to config
-            this, new EmptyEntity(scene));
+            config.spriteKey, this, new EmptyEntity(scene));
 
         this.cellMap.set(hexagonGridCell.asAxialString(), hexagonGridCell);
       }
