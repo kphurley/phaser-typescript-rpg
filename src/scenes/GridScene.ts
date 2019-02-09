@@ -1,5 +1,6 @@
 import {MoveAction} from '../actions/MoveAction';
 import {SpriteEntity} from '../entities/SpriteEntity';
+import {GridSceneStateRouter} from '../states/GridSceneStateRouter';
 import {HexagonGrid} from '../util/HexagonGrid';
 import {HexagonGridCell} from '../util/HexagonGridCell';
 
@@ -60,6 +61,26 @@ export class GridScene extends Phaser.Scene {
         console.log('initiating move');
       } else {
         console.log('turning move state off');
+      }
+    });
+
+    const stateRouter = new GridSceneStateRouter(this);
+
+    this.input.keyboard.on('keydown', (keyboardEvent: KeyboardEvent) => {
+      console.log(Date.now());
+      switch (keyboardEvent.key) {
+        case 'p':
+          setTimeout(() => {
+            this.events.emit('planning');
+          }, 1000);
+          break;
+        case 'r':
+          setTimeout(() => {
+            this.events.emit('resolveCombat');
+          }, 1000);
+          break;
+        default:
+          return;
       }
     });
   }

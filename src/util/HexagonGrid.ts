@@ -22,7 +22,8 @@ export class HexagonGrid {
     x: number, y: number, height: number; width: number;
   }) {
     this.options = options;
-    this.cellMap = new Map();
+    this.cellMap =
+        new Map();  // TODO - FIX THIS, SHOULD ALLOW US NOT TO HAVE TO CAST
     this.createGrid(scene);
   }
 
