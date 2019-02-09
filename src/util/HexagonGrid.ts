@@ -60,11 +60,53 @@ export class HexagonGrid {
     return desiredCell.pixelLocation;
   }
 
+  axialStringToCubeObj(axialString: string): {x: number, y: number, z: number} {
+    const {q, r} =
+        (this.cellMap.get(axialString) as HexagonGridCell).axialLocation;
+    const x = q;
+    const z = r;
+    const y = -x - z;
+
+    return {x, y, z};
+  }
+
+  sumCubeObjsToAxialString(
+      cube1: {x: number, y: number, z: number},
+      cube2: {x: number, y: number, z: number}): string {
+    const sumX = cube1.x + cube2.x;
+    const sumZ = cube1.z + cube2.z;
+
+    return `${sumX},${sumZ}`;
+  }
+
+  getCellsWithinRangeOf(center: string, range: number): string[] {
+    const results: string[] = [];
+
+    for (let x = -range; x >= -range && x <= range; x++) {
+      const yInit = Math.max(-range, -x - range);
+      for (let y = yInit; y >= yInit && y <= Math.min(range, -x + range); y++) {
+        const z = -x - y;
+        results.push(this.sumCubeObjsToAxialString(
+            this.axialStringToCubeObj(center), {x, y, z}));
+      }
+    }
+
+    return results;
+  }
+
   isCellWithinRangeOf(center: string, destination: string, range: number):
       boolean {
-    // Implement me
+    const cellsWithinRange = this.getCellsWithinRangeOf(center, range);
 
-    return false;
+    return cellsWithinRange
+        .filter((cell: string) => {
+          if (!this.cellMap.has(cell)) {
+            return false;
+          }
+
+          return (this.cellMap.get(cell) as HexagonGridCell).isEmpty();
+        })
+        .includes(destination);
   }
 
   static offsetToPixel(xCoord: number, yCoord: number, options: {

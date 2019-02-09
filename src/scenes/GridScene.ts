@@ -1,5 +1,5 @@
+import {MoveAction} from '../actions/MoveAction';
 import {SpriteEntity} from '../entities/SpriteEntity';
-
 import {HexagonGrid} from '../util/HexagonGrid';
 import {HexagonGridCell} from '../util/HexagonGridCell';
 
@@ -21,17 +21,23 @@ export class GridScene extends Phaser.Scene {
   }
 
   create() {
-    const isMoving = false;
+    let isMoving = false;
+    let moveAction: MoveAction;
 
     // These are really just for debugging, we can remove when we're confident
     // this all works
     const addInteractions = (sprite: Phaser.GameObjects.Sprite) => {
       sprite.setInteractive();
-      sprite.on(
-          'pointerdown',
-          (pointer: Phaser.Input.Pointer) => {
-              // Set destination and execute move if valid
-          });
+      sprite.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
+        if (isMoving) {
+          moveAction.setMoveDestination(
+              sprite.getData('cellData').asAxialString());
+
+          if (moveAction.isValid()) {
+            moveAction.execute();
+          }
+        }
+      });
     };
 
     for (const [_, hexagonGridCell] of this.hexagonGrid.cellMap) {
@@ -44,7 +50,18 @@ export class GridScene extends Phaser.Scene {
       addInteractions(sprite);
     }
 
-    // Create entity and move action
+    const movingEntity = new SpriteEntity(this, 'mover', 'warrior', `3,2`);
+    moveAction = new MoveAction(movingEntity, 'quickMove');
+
+    movingEntity.sprite.setInteractive();
+    movingEntity.sprite.on('pointerdown', () => {
+      isMoving = !isMoving;
+      if (isMoving) {
+        console.log('initiating move');
+      } else {
+        console.log('turning move state off');
+      }
+    });
   }
 
   update(time: number, delta: number) {}
