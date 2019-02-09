@@ -1,5 +1,6 @@
+import {MoveAction} from '../actions/MoveAction';
 import {SpriteEntity} from '../entities/SpriteEntity';
-
+import {GridSceneStateRouter} from '../states/GridSceneStateRouter';
 import {HexagonGrid} from '../util/HexagonGrid';
 import {HexagonGridCell} from '../util/HexagonGridCell';
 
@@ -18,52 +19,28 @@ export class GridScene extends Phaser.Scene {
     this.load.image('test_kenney', 'assets/sprites/dirt_08_60x70.png');
     this.load.image('slime', 'assets/sprites/slime_64.png');
     this.load.image('warrior', 'assets/sprites/warrior_64.png');
+    this.load.image('moveButton', 'assets/sprites/icons/move.png');
   }
 
   create() {
-    let isPathfinding = false;
-    let startOfPath: HexagonGridCell;
-    let pathSprites: Phaser.GameObjects.Sprite[] = [];
-
-    const createOrRemoveStartOfPath = (sprite: Phaser.GameObjects.Sprite) => {
-      isPathfinding = !isPathfinding;
-      if (isPathfinding) {
-        startOfPath = sprite.getData('cellData');
-      }
-    };
-
-    const handlePathfinding = (sprite: Phaser.GameObjects.Sprite) => {
-      if (isPathfinding) {
-        pathSprites.forEach(
-            (sprite: Phaser.GameObjects.Sprite) => sprite.destroy());
-        pathSprites = [];
-
-        const path = startOfPath.findPathToCell(sprite.getData('cellData'));
-        path.forEach((cell: HexagonGridCell) => {
-          pathSprites.push(this.add.sprite(
-              cell.pixelLocation.x, cell.pixelLocation.y, 'slime'));
-        });
-      }
-    };
+    let isMoving = false;
+    let moveAction: MoveAction;
 
     // These are really just for debugging, we can remove when we're confident
     // this all works
     const addInteractions = (sprite: Phaser.GameObjects.Sprite) => {
       sprite.setInteractive();
       sprite.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
-        createOrRemoveStartOfPath(sprite);
+        if (isMoving) {
+          moveAction.setMoveDestination(
+              sprite.getData('cellData').asAxialString());
+
+          if (moveAction.isValid()) {
+            moveAction.execute();
+          }
+        }
       });
     };
-
-    this.input.on(
-        'gameobjectover',
-        (pointer: Phaser.Input.Pointer, sprite: Phaser.GameObjects.Sprite) => {
-          if (sprite.getData('blocker')) {
-            return;
-          }
-          handlePathfinding(sprite);
-        });
-
 
     for (const [_, hexagonGridCell] of this.hexagonGrid.cellMap) {
       const {pixelLocation, spriteKey} = hexagonGridCell;
@@ -74,6 +51,47 @@ export class GridScene extends Phaser.Scene {
       // TODO - Do we need this now?
       addInteractions(sprite);
     }
+
+    const movingEntity = new SpriteEntity(this, 'mover', 'warrior', `3,2`);
+    moveAction = new MoveAction(movingEntity, 'quickMove');
+
+    movingEntity.sprite.setInteractive();
+    movingEntity.sprite.on('pointerdown', () => {
+      isMoving = !isMoving;
+      if (isMoving) {
+        console.log('initiating move');
+      } else {
+        console.log('turning move state off');
+      }
+    });
+
+    const stateRouter = new GridSceneStateRouter(this);
+
+    const uiContainer = this.add.container(100, 650);
+    const moveButton = this.add.sprite(10, 10, 'moveButton');
+    uiContainer.add(moveButton);
+    let uiVisible = true;
+
+    this.input.keyboard.on('keydown', (keyboardEvent: KeyboardEvent) => {
+      switch (keyboardEvent.key) {
+        case 'p':
+          setTimeout(() => {
+            this.events.emit('planning');
+          }, 1000);
+          break;
+        case 'r':
+          setTimeout(() => {
+            this.events.emit('resolveCombat');
+          }, 1000);
+          break;
+        case 'u':
+          uiVisible = !uiVisible;
+          uiContainer.setVisible(uiVisible);
+          break;
+        default:
+          return;
+      }
+    });
   }
 
   update(time: number, delta: number) {}

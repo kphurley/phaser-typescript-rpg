@@ -1,0 +1,7 @@
+{
+  "quickMove": {
+    "name": "Quick Move",
+    "initiative": 90,
+    "range": 3
+  }
+}

@@ -1,34 +1,32 @@
 import {EmptyEntity} from '../entities/EmptyEntity';
 import {Entity} from '../entities/Entity';
+import {GridScene} from '../scenes/GridScene';
 
 import {HexagonGridCell} from './HexagonGridCell';
 import config from './hexagonGridConfig.json';
-
-// NOTE:  This is the motherlode for what we're trying to accomplish here:
-// https://www.redblobgames.com/grids/hexagons/
 
 const SIDE_LENGTH = config.sideLength;
 const SIDE_LENGTH_ROOT_3 = SIDE_LENGTH * Math.sqrt(3);
 
 export class HexagonGrid {
-  scene!: Phaser.Scene;
+  scene!: GridScene;
   options: {x: number, y: number, height: number; width: number;};
 
   // Storage of the cells - Key is the axial coordinates of the cell
   cellMap: Map<string, HexagonGridCell>;
 
-  constructor(scene: Phaser.Scene, options: {
+  constructor(scene: GridScene, options: {
     x: number, y: number, height: number; width: number;
   }) {
     this.options = options;
-    this.cellMap = new Map();
+    this.cellMap = new Map<string, HexagonGridCell>();
     this.createGrid(scene);
   }
 
   // Create a grid for parameter scene.  Start position of grid is (x, y) in
-  // pixels Assumes start at center of top left hex, pointy hexes, rectangular
+  // pixels. Assumes start at center of top left hex, pointy hexes, rectangular
   // layout
-  createGrid(scene: Phaser.Scene): void {
+  createGrid(scene: GridScene): void {
     const {height, width} = this.options;
 
     for (let yIdx = 0; yIdx < height; yIdx++) {
@@ -37,8 +35,7 @@ export class HexagonGrid {
         const hexagonGridCell = new HexagonGridCell(
             {q: axialQ, r: axialR}, {col: xIdx, row: yIdx},
             HexagonGrid.offsetToPixel(xIdx, yIdx, this.options),
-            'test_kenney',  // TODO - Extract to config
-            this, new EmptyEntity(scene));
+            config.spriteKey, this, new EmptyEntity(scene));
 
         this.cellMap.set(hexagonGridCell.asAxialString(), hexagonGridCell);
       }
@@ -57,6 +54,55 @@ export class HexagonGrid {
   axialStringToPixelLocation(axialString: string): {x: number, y: number} {
     const desiredCell = this.cellMap.get(axialString) as HexagonGridCell;
     return desiredCell.pixelLocation;
+  }
+
+  axialStringToCubeObj(axialString: string): {x: number, y: number, z: number} {
+    const {q, r} =
+        (this.cellMap.get(axialString) as HexagonGridCell).axialLocation;
+    const x = q;
+    const z = r;
+    const y = -x - z;
+
+    return {x, y, z};
+  }
+
+  sumCubeObjsToAxialString(
+      cube1: {x: number, y: number, z: number},
+      cube2: {x: number, y: number, z: number}): string {
+    const sumX = cube1.x + cube2.x;
+    const sumZ = cube1.z + cube2.z;
+
+    return `${sumX},${sumZ}`;
+  }
+
+  getCellsWithinRangeOf(center: string, range: number): string[] {
+    const results: string[] = [];
+
+    for (let x = -range; x >= -range && x <= range; x++) {
+      const yInit = Math.max(-range, -x - range);
+      for (let y = yInit; y >= yInit && y <= Math.min(range, -x + range); y++) {
+        const z = -x - y;
+        results.push(this.sumCubeObjsToAxialString(
+            this.axialStringToCubeObj(center), {x, y, z}));
+      }
+    }
+
+    return results;
+  }
+
+  isCellWithinRangeOf(center: string, destination: string, range: number):
+      boolean {
+    const cellsWithinRange = this.getCellsWithinRangeOf(center, range);
+
+    return cellsWithinRange
+        .filter((cell: string) => {
+          if (!this.cellMap.has(cell)) {
+            return false;
+          }
+
+          return (this.cellMap.get(cell) as HexagonGridCell).isEmpty();
+        })
+        .includes(destination);
   }
 
   static offsetToPixel(xCoord: number, yCoord: number, options: {
