@@ -1,7 +1,9 @@
-import {Entity} from './Entity';
+import {GridScene} from '../scenes/GridScene';
 
-export class EmptyEntity extends Entity {
-  constructor(scene: Phaser.Scene) {
+import {GridEntity} from './GridEntity';
+
+export class EmptyEntity extends GridEntity {
+  constructor(scene: GridScene) {
     super(scene, 'empty');
   }
 

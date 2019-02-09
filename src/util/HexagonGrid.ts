@@ -1,5 +1,6 @@
 import {EmptyEntity} from '../entities/EmptyEntity';
 import {Entity} from '../entities/Entity';
+import {GridScene} from '../scenes/GridScene';
 
 import {HexagonGridCell} from './HexagonGridCell';
 import config from './hexagonGridConfig.json';
@@ -11,13 +12,13 @@ const SIDE_LENGTH = config.sideLength;
 const SIDE_LENGTH_ROOT_3 = SIDE_LENGTH * Math.sqrt(3);
 
 export class HexagonGrid {
-  scene!: Phaser.Scene;
+  scene!: GridScene;
   options: {x: number, y: number, height: number; width: number;};
 
   // Storage of the cells - Key is the axial coordinates of the cell
   cellMap: Map<string, HexagonGridCell>;
 
-  constructor(scene: Phaser.Scene, options: {
+  constructor(scene: GridScene, options: {
     x: number, y: number, height: number; width: number;
   }) {
     this.options = options;
@@ -28,7 +29,7 @@ export class HexagonGrid {
   // Create a grid for parameter scene.  Start position of grid is (x, y) in
   // pixels Assumes start at center of top left hex, pointy hexes, rectangular
   // layout
-  createGrid(scene: Phaser.Scene): void {
+  createGrid(scene: GridScene): void {
     const {height, width} = this.options;
 
     for (let yIdx = 0; yIdx < height; yIdx++) {
@@ -57,6 +58,13 @@ export class HexagonGrid {
   axialStringToPixelLocation(axialString: string): {x: number, y: number} {
     const desiredCell = this.cellMap.get(axialString) as HexagonGridCell;
     return desiredCell.pixelLocation;
+  }
+
+  isCellWithinRangeOf(center: string, destination: string, range: number):
+      boolean {
+    // Implement me
+
+    return false;
   }
 
   static offsetToPixel(xCoord: number, yCoord: number, options: {

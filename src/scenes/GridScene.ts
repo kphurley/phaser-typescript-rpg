@@ -21,49 +21,18 @@ export class GridScene extends Phaser.Scene {
   }
 
   create() {
-    let isPathfinding = false;
-    let startOfPath: HexagonGridCell;
-    let pathSprites: Phaser.GameObjects.Sprite[] = [];
-
-    const createOrRemoveStartOfPath = (sprite: Phaser.GameObjects.Sprite) => {
-      isPathfinding = !isPathfinding;
-      if (isPathfinding) {
-        startOfPath = sprite.getData('cellData');
-      }
-    };
-
-    const handlePathfinding = (sprite: Phaser.GameObjects.Sprite) => {
-      if (isPathfinding) {
-        pathSprites.forEach(
-            (sprite: Phaser.GameObjects.Sprite) => sprite.destroy());
-        pathSprites = [];
-
-        const path = startOfPath.findPathToCell(sprite.getData('cellData'));
-        path.forEach((cell: HexagonGridCell) => {
-          pathSprites.push(this.add.sprite(
-              cell.pixelLocation.x, cell.pixelLocation.y, 'slime'));
-        });
-      }
-    };
+    const isMoving = false;
 
     // These are really just for debugging, we can remove when we're confident
     // this all works
     const addInteractions = (sprite: Phaser.GameObjects.Sprite) => {
       sprite.setInteractive();
-      sprite.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
-        createOrRemoveStartOfPath(sprite);
-      });
+      sprite.on(
+          'pointerdown',
+          (pointer: Phaser.Input.Pointer) => {
+              // Set destination and execute move if valid
+          });
     };
-
-    this.input.on(
-        'gameobjectover',
-        (pointer: Phaser.Input.Pointer, sprite: Phaser.GameObjects.Sprite) => {
-          if (sprite.getData('blocker')) {
-            return;
-          }
-          handlePathfinding(sprite);
-        });
-
 
     for (const [_, hexagonGridCell] of this.hexagonGrid.cellMap) {
       const {pixelLocation, spriteKey} = hexagonGridCell;
@@ -74,6 +43,8 @@ export class GridScene extends Phaser.Scene {
       // TODO - Do we need this now?
       addInteractions(sprite);
     }
+
+    // Create entity and move action
   }
 
   update(time: number, delta: number) {}

@@ -1,8 +1,8 @@
 import {GridScene} from '../scenes/GridScene';
 
-import {Entity} from './Entity';
+import {GridEntity} from './GridEntity';
 
-export class SpriteEntity extends Entity {
+export class SpriteEntity extends GridEntity {
   spriteRef: string;
   sprite: Phaser.GameObjects.Sprite;
   location: string;
@@ -22,4 +22,6 @@ export class SpriteEntity extends Entity {
   isEmpty(): boolean {
     return false;
   }
+
+  moveTo(axialLocation: string) {}
 }
