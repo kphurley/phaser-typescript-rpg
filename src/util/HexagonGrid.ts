@@ -1,5 +1,6 @@
 import {EmptyEntity} from '../entities/EmptyEntity';
 import {Entity} from '../entities/Entity';
+import {PlayerEntity} from '../entities/player/PlayerEntity';
 import {GridScene} from '../scenes/GridScene';
 
 import {HexagonGridCell} from './HexagonGridCell';
@@ -39,6 +40,19 @@ export class HexagonGrid {
 
         this.cellMap.set(hexagonGridCell.asAxialString(), hexagonGridCell);
       }
+    }
+  }
+
+  renderGrid(scene: GridScene) {
+    for (const [_, hexagonGridCell] of this.cellMap) {
+      const {pixelLocation, spriteKey} = hexagonGridCell;
+      const sprite =
+          scene.add.sprite(pixelLocation.x, pixelLocation.y, spriteKey);
+      sprite.setData('cellData', hexagonGridCell);
+      hexagonGridCell.setSprite(sprite);
+
+      // TODO - Delegate the config to the state
+      // addInteractions(sprite);
     }
   }
 
@@ -103,6 +117,16 @@ export class HexagonGrid {
           return (this.cellMap.get(cell) as HexagonGridCell).isEmpty();
         })
         .includes(destination);
+  }
+
+  getPlayerEntities(): Entity[] {
+    const cellMapEntities = [];
+
+    for (const [_, hexagonGridCell] of this.cellMap) {
+      cellMapEntities.push(hexagonGridCell.contents);
+    }
+
+    return cellMapEntities.filter((entity) => entity instanceof PlayerEntity);
   }
 
   static offsetToPixel(xCoord: number, yCoord: number, options: {

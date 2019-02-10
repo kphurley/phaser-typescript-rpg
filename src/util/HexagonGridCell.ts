@@ -8,7 +8,9 @@ export class HexagonGridCell {
   spriteKey: string;
   grid: HexagonGrid;
 
-  private contents: Entity;
+  sprite!: Phaser.GameObjects.Sprite;
+
+  contents: Entity;
 
   constructor(
       axialLocation: {q: number, r: number},
@@ -25,6 +27,10 @@ export class HexagonGridCell {
 
   setContents(entity: Entity) {
     this.contents = entity;
+  }
+
+  setSprite(sprite: Phaser.GameObjects.Sprite) {
+    this.sprite = sprite;
   }
 
   isEmpty() {
