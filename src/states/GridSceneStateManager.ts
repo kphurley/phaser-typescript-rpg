@@ -24,8 +24,6 @@ export class GridSceneStateManager extends Phaser.Events.EventEmitter {
   }
 
   init() {
-    // TODO - Place enemies on the grid
-
     // Create starting states
     this.stateMap.set('planning', new PlanningGridSceneState(this.scene));
     this.stateMap.set(
@@ -42,10 +40,12 @@ export class GridSceneStateManager extends Phaser.Events.EventEmitter {
     this.scene.events.on('planning', () => {
       if (this.activeState !== 'planning') return;
 
-      // TODO:
-      // This is important - we'll be iterating over these and they'll
-      // encapsulate a lot of stuff const actions = planningState.getActions();
+      // TODO:  If any of the actions are undefined,
+      // we should send back to the planning state
+      const actions = (planningState as PlanningGridSceneState).getActions();
+      console.log('Actions created from planning state: ', actions);
 
+      // TODO:
       // Sort the actions by initiative
 
       // Create action states for each action in actions
@@ -57,8 +57,8 @@ export class GridSceneStateManager extends Phaser.Events.EventEmitter {
       // Ensure each handler selects the next in the list
       // And tha last one selects resolveCombat
 
-      // Temporary - this should instead select the first action from the sorted
-      // list
+      // TODO:  This is temporary - this should instead select the first action
+      // from the sorted list
       this.activeState = 'resolveCombat';
       (this.stateMap.get('resolveCombat') as GridSceneState).entry();
     });

@@ -1,3 +1,4 @@
+import {Action} from '../../actions/Action';
 import {GridScene} from '../../scenes/GridScene';
 import {SpriteEntity} from '../SpriteEntity';
 
@@ -7,6 +8,9 @@ export class PlayerEntity extends SpriteEntity {
   uiContainer: Phaser.GameObjects.Container;
 
   selectedSkill?: string;
+  skillConfirmed: boolean;
+
+  queuedAction?: Action;
 
   constructor(
       scene: GridScene, name: string, spriteRef: string, location: string,
@@ -14,12 +18,14 @@ export class PlayerEntity extends SpriteEntity {
     super(scene, name, spriteRef, location);
     this.characterConfig = characterConfig;
     this.uiContainer = this.createActionBar();
+
+    this.skillConfirmed = false;
   }
 
   // Character config
   createActionBar(): Phaser.GameObjects.Container {
     // TODO:  Magic numbers, vary X in forEach loop when more skills are added
-    const uiContainer = this.scene.add.container(100, 650);
+    const uiContainer = this.scene.add.container(400, 650);
 
     this.characterConfig.skills.forEach((skillName) => {
       const button = this.scene.add.sprite(10, 10, skillName);
@@ -28,6 +34,7 @@ export class PlayerEntity extends SpriteEntity {
       button.on('pointerdown', () => {
         // TODO:  Highlight the button somehow?
         this.selectedSkill = skillName;
+        this.scene.events.emit('skillSelected', this, skillName);
       });
 
       uiContainer.add(button);
@@ -38,6 +45,22 @@ export class PlayerEntity extends SpriteEntity {
   }
 
   // UI
+  confirmSkillSelection() {
+    this.skillConfirmed = true;
+  }
+
+  hasConfirmedSkillSelection() {
+    return this.skillConfirmed;
+  }
+
+  hasUnconfirmedSkillSelection() {
+    return this.skillConfirmed === false;
+  }
+
+  queueAction(action: Action) {
+    this.queuedAction = action;
+  }
+
   setActionBarVisible(value: boolean) {
     this.uiContainer.setVisible(value);
   }

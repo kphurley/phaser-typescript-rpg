@@ -1,3 +1,5 @@
+import {Action} from '../actions/Action';
+import {ActionFactory} from '../actions/ActionFactory';
 import {Entity} from '../entities/Entity';
 import {PlayerEntity} from '../entities/player/PlayerEntity';
 import {GridScene} from '../scenes/GridScene';
@@ -5,50 +7,94 @@ import {GridScene} from '../scenes/GridScene';
 import {GridSceneState} from './GridSceneState';
 
 export class PlanningGridSceneState extends GridSceneState {
-  selected?: Entity;
+  confirmUIContainer: Phaser.GameObjects.Container;
+  playerEntities: Entity[];
+  selectedEntity?: Entity;
+  selectedSkillName?: string;
 
   constructor(scene: GridScene) {
     super(scene, 'planning');
+    this.playerEntities = this.scene.hexagonGrid.getPlayerEntities();
+    this.confirmUIContainer = this.addConfirmUIContainer();
   }
 
   entry() {
-    // Configure input for this state
-    const playerEntities = this.scene.hexagonGrid.getPlayerEntities();
-
-    playerEntities.forEach((entity) => {
+    this.playerEntities.forEach((entity) => {
       const pe = entity as PlayerEntity;
       pe.sprite.setInteractive();
       pe.sprite.on('pointerdown', () => {
-        this.hideAllActionBars();
-        pe.setActionBarVisible(true);
-        this.selected = pe;
+        this.selectEntity(pe);
       });
     });
-    /*
-        - When the action is selected the confirm button appears (not sure as of
-       now how to do this)
-        - Selecting confirm "locks in the choice"
-        - The actual instance of Action should be stored as part of the data
-       saved here
-        - At this time, check to see if all choices are locked, if so, fire the
-       complete event
 
-        - Nothing on the grid should be interactable
-    */
+    this.scene.events.on(
+        'skillSelected', (entity: PlayerEntity, skillName: string) => {
+          this.confirmUIContainer.setVisible(true);
+          this.selectedSkillName = skillName;
+        });
   }
 
   exit() {
-    // Clear all input handlers
+    // TODO - Cleanup the inputs/events/containers
   }
 
-  getActions() {
-    // Return all of the selected actions
+  getActions(): Array<Action|undefined> {
+    return this.playerEntities.map(
+        (entity) => (entity as PlayerEntity).queuedAction);
+  }
+
+  selectEntity(playerEntity: PlayerEntity) {
+    if (playerEntity.hasConfirmedSkillSelection()) return;
+
+    this.hideAllActionBars();
+    this.confirmUIContainer.setVisible(false);
+    playerEntity.setActionBarVisible(true);
+    this.selectedEntity = playerEntity;
   }
 
   hideAllActionBars() {
-    const entities = this.scene.hexagonGrid.getPlayerEntities();
-    entities.forEach((entity) => {
+    this.playerEntities.forEach((entity) => {
       (entity as PlayerEntity).setActionBarVisible(false);
     });
+  }
+
+  addConfirmUIContainer() {
+    const confirmUIContainer = this.scene.add.container(800, 650);
+    const confirmButton = this.scene.add.sprite(10, 10, 'confirm');
+    confirmButton.setInteractive();
+    confirmButton.on('pointerdown', this.handleSkillConfirmation.bind(this));
+
+    confirmUIContainer.add(confirmButton);
+    confirmUIContainer.setVisible(false);
+
+    return confirmUIContainer;
+  }
+
+  handleSkillConfirmation() {
+    const selectedPlayerEntity = this.selectedEntity as PlayerEntity;
+    selectedPlayerEntity.confirmSkillSelection();
+
+    const actionInstance =
+        new ActionFactory(
+            selectedPlayerEntity, this.selectedSkillName as string)
+            .getInstance();
+    selectedPlayerEntity.queueAction(actionInstance);
+
+    const unconfirmedEntities =
+        this.playerEntitiesWithUnconfirmedSkillSelection();
+    if (unconfirmedEntities.length) {
+      // if there's an available entity with an unconfirmed choice, select it
+      this.selectEntity(unconfirmedEntities[0] as PlayerEntity);
+    } else {
+      // Otherwise, call exit() and emit the 'planning' event with the selected
+      // actions, signifying this state should transition
+      this.exit();
+      this.scene.events.emit('planning');
+    }
+  }
+
+  playerEntitiesWithUnconfirmedSkillSelection(): Entity[] {
+    return this.playerEntities.filter(
+        (entity) => (entity as PlayerEntity).hasUnconfirmedSkillSelection());
   }
 }
