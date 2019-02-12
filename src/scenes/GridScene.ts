@@ -17,8 +17,9 @@ export class GridScene extends Phaser.Scene {
     // TODO - Extract to config or preload helper
     this.load.image('test_kenney', 'assets/sprites/dirt_08_60x70.png');
     this.load.image('slime', 'assets/sprites/slime_64.png');
-    this.load.image('warrior', 'assets/sprites/warrior_64.png');
-    this.load.image('wizzard', 'assets/sprites/wizzard_64.png');
+    this.load.image('ranger', 'assets/sprites/ranger.png');
+    this.load.image('warrior', 'assets/sprites/warrior.png');
+    this.load.image('wizzard', 'assets/sprites/wizzard.png');
     this.load.image('quickMove', 'assets/sprites/icons/fire-dash.png');
     this.load.image('move', 'assets/sprites/icons/run.png');
     this.load.image('confirm', 'assets/sprites/icons/play-button.png');
@@ -34,6 +35,8 @@ export class GridScene extends Phaser.Scene {
         this, 'playerWarrior', 'warrior', `3,2`, {skills: ['quickMove']});
     const playerWizard = new PlayerEntity(
         this, 'playerWizard', 'wizzard', `4,2`, {skills: ['move']});
+    const playerRanger = new PlayerEntity(
+        this, 'playerRanger', 'ranger', `5,2`, {skills: ['quickMove']});
 
     // TODO:  Place enemies on the grid
 
