@@ -6,6 +6,9 @@ export interface Action {
   entity: Entity;
   error?: string;
 
+  configureInputs(): void;
   isValid(): boolean;
   execute(): void;
+
+  onExecuteComplete(callback: () => void): void;
 }

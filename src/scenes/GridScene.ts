@@ -3,14 +3,18 @@ import {GridSceneStateManager} from '../states/GridSceneStateManager';
 import {HexagonGrid} from '../util/HexagonGrid';
 
 export class GridScene extends Phaser.Scene {
-  polygons!: Phaser.GameObjects.Sprite[];
-  text!: Phaser.GameObjects.Text;
+  sceneGraphics!: Phaser.GameObjects.Graphics;
   hexagonGrid: HexagonGrid;
+
+  follower: {t: number, vec: Phaser.Math.Vector2}|undefined;
 
   constructor() {
     super({key: 'TestScene'});
+
     this.hexagonGrid =
         new HexagonGrid(this, {x: 200, y: 100, height: 10, width: 15});
+
+    this.follower = undefined;
   }
 
   preload() {
@@ -26,6 +30,7 @@ export class GridScene extends Phaser.Scene {
   }
 
   create() {
+    this.sceneGraphics = this.add.graphics();
     this.hexagonGrid.renderGrid(this);
     const stateManager = new GridSceneStateManager(this);
 
@@ -43,5 +48,9 @@ export class GridScene extends Phaser.Scene {
     stateManager.init();
   }
 
-  update(time: number, delta: number) {}
+  update(time: number, delta: number) {
+    if (this.follower) {
+      console.log(this.follower.t);
+    }
+  }
 }

@@ -1,5 +1,6 @@
 import actionsConfig from '../config/actionsConfig.json';
 import {SpriteEntity} from '../entities/SpriteEntity';
+import {HexagonGridCell} from '../util/HexagonGridCell.js';
 
 import {Action} from './Action';
 
@@ -8,8 +9,11 @@ export class MoveAction implements Action {
   name: string;
   config: {name: string, initiative: number, range: number};
   destination: string;
+  destinationPath?: Phaser.Curves.Path;
 
   error?: string;
+
+  complete: () => void;
 
   constructor(entity: SpriteEntity, name: string) {
     this.entity = entity;
@@ -21,6 +25,49 @@ export class MoveAction implements Action {
 
     // For bubbling up messages to UI
     this.error = undefined;
+
+    // By default, the complete callback is a no-op
+    // Unless explicitly set to do otherwise by
+    // onExecuteComplete
+    this.complete = () => {};
+  }
+
+  onExecuteComplete(complete: () => void) {
+    this.complete = complete;
+  }
+
+  configureInputs() {
+    const grid = this.entity.scene.hexagonGrid;
+
+    const addInteractions = (sprite: Phaser.GameObjects.Sprite) => {
+      sprite.setInteractive();
+      sprite.on('pointerdown', () => {
+        this.setMoveDestination(sprite.getData('cellData').asAxialString());
+
+        if (this.isValid()) {
+          this.entity.scene.hexagonGrid.deletePathLines();
+          this.execute();
+        }
+      });
+
+      sprite.on('pointerover', () => {
+        const hexagonGrid = this.entity.scene.hexagonGrid;
+        const goalCell = sprite.getData('cellData');
+        const sceneCellMap = hexagonGrid.cellMap;
+        const thisCell =
+            sceneCellMap.get(this.entity.location) as HexagonGridCell;
+        const path = thisCell.findPathToCell(goalCell);
+
+        if (path.length) {
+          hexagonGrid.deletePathLines();
+          this.destinationPath = hexagonGrid.drawPath(path);
+        }
+      });
+    };
+
+    for (const [_, cell] of grid.cellMap) {
+      addInteractions(cell.sprite);
+    }
   }
 
   setMoveDestination(destination: string) {
@@ -47,6 +94,13 @@ export class MoveAction implements Action {
   }
 
   execute() {
-    this.entity.moveTo(this.destination);
+    this.entity.moveAlong(this.destinationPath);  // pass complete callback?
+
+    for (const [_, cell] of this.entity.scene.hexagonGrid.cellMap) {
+      cell.sprite.off('pointerdown');
+      cell.sprite.off('pointerover');
+    }
+
+    this.complete();
   }
 }

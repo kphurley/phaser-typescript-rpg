@@ -10,7 +10,7 @@ const SIDE_LENGTH = config.sideLength;
 const SIDE_LENGTH_ROOT_3 = SIDE_LENGTH * Math.sqrt(3);
 
 export class HexagonGrid {
-  scene!: GridScene;
+  scene: GridScene;
   options: {x: number, y: number, height: number; width: number;};
 
   // Storage of the cells - Key is the axial coordinates of the cell
@@ -21,6 +21,7 @@ export class HexagonGrid {
   }) {
     this.options = options;
     this.cellMap = new Map<string, HexagonGridCell>();
+    this.scene = scene;
     this.createGrid(scene);
   }
 
@@ -127,6 +128,31 @@ export class HexagonGrid {
     }
 
     return cellMapEntities.filter((entity) => entity instanceof PlayerEntity);
+  }
+
+  drawPath(path: HexagonGridCell[]): Phaser.Curves.Path {
+    const graphics = this.scene.sceneGraphics;
+    graphics.setDepth(1);  // This is to put the path on top
+    graphics.lineStyle(3, 0x00FF00, 1.0);
+    // graphics.beginPath();
+    // graphics.moveTo(path[0].pixelLocation.x, path[0].pixelLocation.y);
+    const graphicsPath = new Phaser.Curves.Path(
+        path[0].pixelLocation.x, path[0].pixelLocation.y);
+
+    for (let i = 1; i < path.length; i++) {
+      // graphics.lineTo(path[i].pixelLocation.x, path[i].pixelLocation.y);
+      graphicsPath.lineTo(path[i].pixelLocation.x, path[i].pixelLocation.y);
+    }
+
+    // Draw a target or something at the end?
+    graphicsPath.draw(graphics);
+    // graphics.strokePath();
+
+    return graphicsPath;
+  }
+
+  deletePathLines() {
+    this.scene.sceneGraphics.clear();
   }
 
   static offsetToPixel(xCoord: number, yCoord: number, options: {
