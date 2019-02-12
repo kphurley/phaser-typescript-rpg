@@ -7,7 +7,11 @@ export class ResolveCombatGridSceneState extends GridSceneState {
     super(scene, 'resolveCombat');
   }
 
-  // entry() {}
+  entry() {
+    console.log(
+        `entry called for state with guid: ${this.guid}...resolving...`);
+    setTimeout(() => this.scene.events.emit(this.guid), 1000);
+  }
 
   exit() {}
 }

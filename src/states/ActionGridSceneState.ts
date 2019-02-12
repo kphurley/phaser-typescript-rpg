@@ -1,5 +1,7 @@
 import {Action} from '../actions/Action';
+import {PlayerEntity} from '../entities/player/PlayerEntity';
 import {GridScene} from '../scenes/GridScene';
+
 import {GridSceneState} from './GridSceneState';
 
 export class ActionGridSceneState extends GridSceneState {
@@ -14,7 +16,14 @@ export class ActionGridSceneState extends GridSceneState {
   // to complete the Action
 
   // When complete emit the guid
-  // entry() {}
+  entry() {
+    console.log(
+        `entry called for state with guid: ${this.guid} and `, this.action);
+    setTimeout(() => {
+      this.exit();
+      this.scene.events.emit(this.guid);
+    }, 1000);
+  }
 
   // ---- Old code that probably applies here somehow ----
   // const movingEntity = new SpriteEntity(this, 'mover', 'warrior', `3,2`);
@@ -44,5 +53,13 @@ export class ActionGridSceneState extends GridSceneState {
   //   });
   // };
 
-  exit() {}
+  // At this point, execute should have been called.
+  // Therefore, we should clear the status of the action's entity here
+  exit() {
+    const entity =
+        (this.action.entity as PlayerEntity);  // TODO:  Support AI entities
+    entity.queuedAction = undefined;
+    entity.selectedSkill = undefined;
+    entity.skillConfirmed = false;
+  }
 }
