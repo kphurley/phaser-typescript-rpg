@@ -137,20 +137,19 @@ export class HexagonGrid {
   drawPath(path: HexagonGridCell[]): Phaser.Curves.Path {
     const graphics = this.scene.sceneGraphics;
     graphics.setDepth(1);  // This is to put the path on top
+
+    // CONFIG!!  This controls the style of the path
     graphics.lineStyle(3, 0x00FF00, 1.0);
-    // graphics.beginPath();
-    // graphics.moveTo(path[0].pixelLocation.x, path[0].pixelLocation.y);
+
     const graphicsPath = new Phaser.Curves.Path(
         path[0].pixelLocation.x, path[0].pixelLocation.y);
 
     for (let i = 1; i < path.length; i++) {
-      // graphics.lineTo(path[i].pixelLocation.x, path[i].pixelLocation.y);
       graphicsPath.lineTo(path[i].pixelLocation.x, path[i].pixelLocation.y);
     }
 
-    // Draw a target or something at the end?
+    // TODO: Draw something at the end?
     graphicsPath.draw(graphics);
-    // graphics.strokePath();
 
     return graphicsPath;
   }

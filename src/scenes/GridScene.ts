@@ -31,7 +31,6 @@ export class GridScene extends Phaser.Scene {
   create() {
     this.sceneGraphics = this.add.graphics();
     this.hexagonGrid.renderGrid(this);
-    // const stateManager = new GridSceneStateManager(this);
 
     // TODO - Is this the best place to create the entities?
     // TODO - Extract the 'skills' config someplace else, maybe its own class?
