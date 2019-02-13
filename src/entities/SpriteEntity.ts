@@ -22,6 +22,4 @@ export class SpriteEntity extends GridEntity {
   isEmpty(): boolean {
     return false;
   }
-
-  moveTo(axialLocation: string) {}
 }

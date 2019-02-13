@@ -35,7 +35,15 @@ export class PlanningGridSceneState extends GridSceneState {
   }
 
   exit() {
-    // TODO - Cleanup the inputs/events/containers
+    this.hideAllActionBars();
+    this.confirmUIContainer.destroy();
+
+    this.playerEntities.forEach((entity) => {
+      const pe = entity as PlayerEntity;
+      pe.sprite.off('pointerdown');
+    });
+
+    this.scene.events.off('skillSelected');
   }
 
   getActions(): Array<Action|undefined> {

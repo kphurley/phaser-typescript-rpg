@@ -1,9 +1,11 @@
 // TODO:  Use this to give the created action states unique IDs
 import uuidv4 from 'uuid/v4'; // tslint:disable-line
 
+import {Action} from '../actions/Action';
 import {PlayerEntity} from '../entities/player/PlayerEntity';
 import {GridScene} from '../scenes/GridScene';
 
+import {ActionGridSceneState} from './ActionGridSceneState';
 import {GridSceneState} from './GridSceneState';
 import {PlanningGridSceneState} from './PlanningGridSceneState';
 import {ResolveCombatGridSceneState} from './ResolveCombatGridSceneState';
@@ -18,50 +20,58 @@ export class GridSceneStateManager extends Phaser.Events.EventEmitter {
     super();
 
     this.scene = scene;
-    this.stateIDs = ['planning', 'resolveCombat'];
+    this.stateIDs = ['planning'];
     this.stateMap = new Map<string, GridSceneState>();
     this.activeState = 'planning';
   }
 
   init() {
-    // Create starting states
+    // Create starting state
     this.stateMap.set('planning', new PlanningGridSceneState(this.scene));
-    this.stateMap.set(
-        'resolveCombat', new ResolveCombatGridSceneState(this.scene));
-
     this.createInitialEventHandlers();
-
     (this.stateMap.get('planning') as GridSceneState).entry();
   }
 
-  createInitialEventHandlers() {
-    const planningState = this.stateMap.get('planning');
+  invokeUpdate(time: number, delta: number) {
+    (this.stateMap.get(this.activeState) as GridSceneState).update(time, delta);
+  }
 
-    this.scene.events.on('planning', () => {
-      if (this.activeState !== 'planning') return;
+  generateActionStatesFrom(planningState: PlanningGridSceneState) {
+    const actions = planningState.getActions();
 
-      // TODO:  If any of the actions are undefined,
-      // we should send back to the planning state
-      const actions = (planningState as PlanningGridSceneState).getActions();
-      console.log('Actions created from planning state: ', actions);
-
-      // TODO:
-      // Sort the actions by initiative
-
-      // Create action states for each action in actions
-
-      // Modify stateIDs
-      // Modify stateMap
-
-      // Register complete handlers for newly obtained actions
-      // Ensure each handler selects the next in the list
-      // And tha last one selects resolveCombat
-
-      // TODO:  This is temporary - this should instead select the first action
-      // from the sorted list
-      this.activeState = 'resolveCombat';
-      (this.stateMap.get('resolveCombat') as GridSceneState).entry();
+    actions.sort((actionA, actionB) => {
+      return (actionB as Action).config.initiative -
+          (actionA as Action).config.initiative;
     });
+
+    return actions.map(
+        (action) =>
+            new ActionGridSceneState(this.scene, action as Action, uuidv4()));
+  }
+
+  configureHandlersAndStateMapFor(actionStates: ActionGridSceneState[]) {
+    this.stateIDs =
+        this.stateIDs.concat(actionStates.map((state) => state.guid));
+
+    actionStates.forEach((state) => {
+      this.stateMap.set(state.guid, state);
+    });
+
+    this.stateIDs.forEach((guid, index) => {
+      if (index === 0) return;
+
+      this.scene.events.on(guid, () => {
+        const nextState = this.stateIDs[index + 1] || 'resolveCombat';
+        this.activeState = nextState;
+        (this.stateMap.get(nextState) as GridSceneState).entry();
+      });
+    });
+  }
+
+  configureResolveCombatState() {
+    this.stateIDs.push('resolveCombat');
+    this.stateMap.set(
+        'resolveCombat', new ResolveCombatGridSceneState(this.scene));
 
     this.scene.events.on('resolveCombat', () => {
       if (this.activeState !== 'resolveCombat') return;
@@ -71,10 +81,26 @@ export class GridSceneStateManager extends Phaser.Events.EventEmitter {
       // resolve the combat and end scene
       // else go back to planning
 
+      this.stateIDs = ['planning'];
+      this.stateMap = new Map<string, GridSceneState>();
       this.activeState = 'planning';
-      const newPlanningState = new PlanningGridSceneState(this.scene);
-      this.stateMap.set('planning', newPlanningState);
-      newPlanningState.entry();
+      this.init();
+    });
+  }
+
+  createInitialEventHandlers() {
+    const planningState = this.stateMap.get('planning');
+
+    this.scene.events.on('planning', () => {
+      if (this.activeState !== 'planning') return;
+
+      const actionStates = this.generateActionStatesFrom(
+          planningState as PlanningGridSceneState);
+      this.configureHandlersAndStateMapFor(actionStates);
+      this.configureResolveCombatState();
+
+      this.activeState = this.stateIDs[1];
+      (this.stateMap.get(this.activeState) as GridSceneState).entry();
     });
   }
 }

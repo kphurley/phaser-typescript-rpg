@@ -1,6 +1,7 @@
 import {EmptyEntity} from '../entities/EmptyEntity';
 import {Entity} from '../entities/Entity';
 import {PlayerEntity} from '../entities/player/PlayerEntity';
+import {SpriteEntity} from '../entities/SpriteEntity';
 import {GridScene} from '../scenes/GridScene';
 
 import {HexagonGridCell} from './HexagonGridCell';
@@ -10,7 +11,7 @@ const SIDE_LENGTH = config.sideLength;
 const SIDE_LENGTH_ROOT_3 = SIDE_LENGTH * Math.sqrt(3);
 
 export class HexagonGrid {
-  scene!: GridScene;
+  scene: GridScene;
   options: {x: number, y: number, height: number; width: number;};
 
   // Storage of the cells - Key is the axial coordinates of the cell
@@ -21,6 +22,7 @@ export class HexagonGrid {
   }) {
     this.options = options;
     this.cellMap = new Map<string, HexagonGridCell>();
+    this.scene = scene;
     this.createGrid(scene);
   }
 
@@ -50,9 +52,6 @@ export class HexagonGrid {
           scene.add.sprite(pixelLocation.x, pixelLocation.y, spriteKey);
       sprite.setData('cellData', hexagonGridCell);
       hexagonGridCell.setSprite(sprite);
-
-      // TODO - Delegate the config to the state
-      // addInteractions(sprite);
     }
   }
 
@@ -63,6 +62,12 @@ export class HexagonGrid {
 
     const gridCell = this.cellMap.get(location) as HexagonGridCell;
     gridCell.setContents(entity);
+
+    const possibleSpriteEntity = entity as SpriteEntity;
+    if (possibleSpriteEntity.sprite) {
+      possibleSpriteEntity.sprite.setData('cellData', gridCell);
+      possibleSpriteEntity.location = location;
+    }
   }
 
   axialStringToPixelLocation(axialString: string): {x: number, y: number} {
@@ -127,6 +132,30 @@ export class HexagonGrid {
     }
 
     return cellMapEntities.filter((entity) => entity instanceof PlayerEntity);
+  }
+
+  drawPath(path: HexagonGridCell[]): Phaser.Curves.Path {
+    const graphics = this.scene.sceneGraphics;
+    graphics.setDepth(1);  // This is to put the path on top
+
+    // CONFIG!!  This controls the style of the path
+    graphics.lineStyle(3, 0x00FF00, 1.0);
+
+    const graphicsPath = new Phaser.Curves.Path(
+        path[0].pixelLocation.x, path[0].pixelLocation.y);
+
+    for (let i = 1; i < path.length; i++) {
+      graphicsPath.lineTo(path[i].pixelLocation.x, path[i].pixelLocation.y);
+    }
+
+    // TODO: Draw something at the end?
+    graphicsPath.draw(graphics);
+
+    return graphicsPath;
+  }
+
+  deletePathLines() {
+    this.scene.sceneGraphics.clear();
   }
 
   static offsetToPixel(xCoord: number, yCoord: number, options: {
