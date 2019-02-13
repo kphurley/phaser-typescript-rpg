@@ -12,10 +12,11 @@ export class ActionGridSceneState extends GridSceneState {
     this.action = action;
   }
 
-  entry() {
-    console.log(
-        `entry called for state with guid: ${this.guid} and `, this.action);
+  update(time: number, delta: number) {
+    this.action.update(time, delta);
+  }
 
+  entry() {
     this.action.configureInputs();
 
     this.action.onExecuteComplete(() => {

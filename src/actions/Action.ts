@@ -9,6 +9,7 @@ export interface Action {
   configureInputs(): void;
   isValid(): boolean;
   execute(): void;
+  update(time: number, delta: number): void;
 
   onExecuteComplete(callback: () => void): void;
 }

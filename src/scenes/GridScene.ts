@@ -3,10 +3,9 @@ import {GridSceneStateManager} from '../states/GridSceneStateManager';
 import {HexagonGrid} from '../util/HexagonGrid';
 
 export class GridScene extends Phaser.Scene {
-  sceneGraphics!: Phaser.GameObjects.Graphics;
   hexagonGrid: HexagonGrid;
-
-  follower: {t: number, vec: Phaser.Math.Vector2}|undefined;
+  sceneGraphics!: Phaser.GameObjects.Graphics;
+  stateManager: GridSceneStateManager;
 
   constructor() {
     super({key: 'TestScene'});
@@ -14,7 +13,7 @@ export class GridScene extends Phaser.Scene {
     this.hexagonGrid =
         new HexagonGrid(this, {x: 200, y: 100, height: 10, width: 15});
 
-    this.follower = undefined;
+    this.stateManager = new GridSceneStateManager(this);
   }
 
   preload() {
@@ -32,7 +31,7 @@ export class GridScene extends Phaser.Scene {
   create() {
     this.sceneGraphics = this.add.graphics();
     this.hexagonGrid.renderGrid(this);
-    const stateManager = new GridSceneStateManager(this);
+    // const stateManager = new GridSceneStateManager(this);
 
     // TODO - Is this the best place to create the entities?
     // TODO - Extract the 'skills' config someplace else, maybe its own class?
@@ -45,12 +44,10 @@ export class GridScene extends Phaser.Scene {
 
     // TODO:  Place enemies on the grid
 
-    stateManager.init();
+    this.stateManager.init();
   }
 
   update(time: number, delta: number) {
-    if (this.follower) {
-      console.log(this.follower.t);
-    }
+    this.stateManager.invokeUpdate(time, delta);
   }
 }

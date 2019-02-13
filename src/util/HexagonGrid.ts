@@ -1,6 +1,7 @@
 import {EmptyEntity} from '../entities/EmptyEntity';
 import {Entity} from '../entities/Entity';
 import {PlayerEntity} from '../entities/player/PlayerEntity';
+import {SpriteEntity} from '../entities/SpriteEntity';
 import {GridScene} from '../scenes/GridScene';
 
 import {HexagonGridCell} from './HexagonGridCell';
@@ -51,9 +52,6 @@ export class HexagonGrid {
           scene.add.sprite(pixelLocation.x, pixelLocation.y, spriteKey);
       sprite.setData('cellData', hexagonGridCell);
       hexagonGridCell.setSprite(sprite);
-
-      // TODO - Delegate the config to the state
-      // addInteractions(sprite);
     }
   }
 
@@ -64,6 +62,12 @@ export class HexagonGrid {
 
     const gridCell = this.cellMap.get(location) as HexagonGridCell;
     gridCell.setContents(entity);
+
+    const possibleSpriteEntity = entity as SpriteEntity;
+    if (possibleSpriteEntity.sprite) {
+      possibleSpriteEntity.sprite.setData('cellData', gridCell);
+      possibleSpriteEntity.location = location;
+    }
   }
 
   axialStringToPixelLocation(axialString: string): {x: number, y: number} {

@@ -19,7 +19,6 @@ export class PlanningGridSceneState extends GridSceneState {
   }
 
   entry() {
-    console.log(`entry called for state with guid: ${this.guid}`);
     this.playerEntities.forEach((entity) => {
       const pe = entity as PlayerEntity;
       pe.sprite.setInteractive();

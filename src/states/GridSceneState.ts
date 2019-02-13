@@ -9,10 +9,11 @@ export abstract class GridSceneState implements State {
     this.guid = guid;
   }
 
-  // abstract entry() : void;
-  entry() {
-    console.log(`${this.guid} state entered at ${Date.now()}`);
-  }
+  // GridScene delegates it's update to the states.
+  // By default, this is a noop unless explicitly overridden
+  update(time: number, delta: number) {}
+
+  abstract entry(): void;
 
   abstract exit(): void;
 }

@@ -8,8 +8,7 @@ export class ResolveCombatGridSceneState extends GridSceneState {
   }
 
   entry() {
-    console.log(
-        `entry called for state with guid: ${this.guid}...resolving...`);
+    console.log('Resolving combat...');
     setTimeout(() => this.scene.events.emit(this.guid), 1000);
   }
 

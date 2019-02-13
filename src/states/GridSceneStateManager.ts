@@ -32,6 +32,10 @@ export class GridSceneStateManager extends Phaser.Events.EventEmitter {
     (this.stateMap.get('planning') as GridSceneState).entry();
   }
 
+  invokeUpdate(time: number, delta: number) {
+    (this.stateMap.get(this.activeState) as GridSceneState).update(time, delta);
+  }
+
   generateActionStatesFrom(planningState: PlanningGridSceneState) {
     const actions = planningState.getActions();
 

@@ -1,6 +1,7 @@
 import actionsConfig from '../config/actionsConfig.json';
+import {EmptyEntity} from '../entities/EmptyEntity';
 import {SpriteEntity} from '../entities/SpriteEntity';
-import {HexagonGridCell} from '../util/HexagonGridCell.js';
+import {HexagonGridCell} from '../util/HexagonGridCell';
 
 import {Action} from './Action';
 
@@ -10,6 +11,7 @@ export class MoveAction implements Action {
   config: {name: string, initiative: number, range: number};
   destination: string;
   destinationPath?: Phaser.Curves.Path;
+  parameterizedCurve?: {t: number, vec: Phaser.Math.Vector2};
 
   error?: string;
 
@@ -74,7 +76,6 @@ export class MoveAction implements Action {
     if (this.isValidDestination(destination)) {
       this.destination = destination;
       this.error = undefined;
-      console.log(`Destination ${destination} was set`);
     } else {
       this.error = 'Not a valid move destination';
       console.log(this.error);
@@ -94,13 +95,42 @@ export class MoveAction implements Action {
   }
 
   execute() {
-    this.entity.moveAlong(this.destinationPath);  // pass complete callback?
-
     for (const [_, cell] of this.entity.scene.hexagonGrid.cellMap) {
       cell.sprite.off('pointerdown');
       cell.sprite.off('pointerover');
     }
 
-    this.complete();
+    this.parameterizedCurve = {t: 0, vec: new Phaser.Math.Vector2()};
+
+    const tweenOnComplete = () => {
+      this.parameterizedCurve = undefined;
+
+      // Update the hex grid
+      const grid = this.entity.scene.hexagonGrid;
+      const previousLocation = this.entity.location;
+      grid.assignEntityToGridLocation(this.entity, this.destination);
+      grid.assignEntityToGridLocation(
+          new EmptyEntity(this.entity.scene), previousLocation);
+
+      this.complete();
+    };
+
+    this.entity.scene.tweens.add({
+      targets: this.parameterizedCurve,
+      t: 1,
+      duration: 1000,  // TODO - Extract to config
+      onComplete: tweenOnComplete,
+    });
+  }
+
+  // A direct link to the scene's update loop
+  // Update the sprite's position according to the running tween
+  update(time: number, delta: number) {
+    if (this.destinationPath && this.parameterizedCurve) {
+      (this.destinationPath as Phaser.Curves.Path)
+          .getPoint(this.parameterizedCurve.t, this.parameterizedCurve.vec);
+      this.entity.sprite.setPosition(
+          this.parameterizedCurve.vec.x, this.parameterizedCurve.vec.y);
+    }
   }
 }

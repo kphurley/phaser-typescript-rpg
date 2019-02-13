@@ -22,26 +22,4 @@ export class SpriteEntity extends GridEntity {
   isEmpty(): boolean {
     return false;
   }
-
-  moveAlong(path: Phaser.Curves.Path) {
-    // This isn't quite there yet.  Some issues:
-    // The path thing in the examples works with the update loop.  This isn't
-    // ideal. Might be just as easy to forego trying to move along the path And
-    // just create a seperate tween for each path segment We can see the
-    // follower being logged in the update loop of GridScene to see how this
-    // works Alternatively we just have some check within update for active
-    // tweens
-    this.scene.follower = {t: 0, vec: new Phaser.Math.Vector2()};
-    const tweenOnComplete = () => {
-      this.scene.follower = undefined;
-    };
-    const tween = this.scene.tweens.add({
-      targets: this.scene.follower,
-      t: 1,
-      duration: 4000,
-      onComplete: tweenOnComplete,
-    });
-
-    // update location
-  }
 }
