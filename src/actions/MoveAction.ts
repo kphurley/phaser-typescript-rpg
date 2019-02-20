@@ -1,5 +1,6 @@
 import actionsConfig from '../config/actionsConfig.json';
 import {EmptyEntity} from '../entities/EmptyEntity';
+import {PlayerEntity} from '../entities/player/PlayerEntity.js';
 import {SpriteEntity} from '../entities/SpriteEntity';
 import {HexagonGridCell} from '../util/HexagonGridCell';
 
@@ -112,6 +113,7 @@ export class MoveAction implements Action {
       grid.assignEntityToGridLocation(
           new EmptyEntity(this.entity.scene), previousLocation);
 
+      (this.entity as PlayerEntity).setIdle();
       this.complete();
     };
 
@@ -121,6 +123,8 @@ export class MoveAction implements Action {
       duration: 1000,  // TODO - Extract to config
       onComplete: tweenOnComplete,
     });
+
+    (this.entity as PlayerEntity).setWalking();
   }
 
   // A direct link to the scene's update loop
