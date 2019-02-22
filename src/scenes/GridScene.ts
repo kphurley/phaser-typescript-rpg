@@ -24,8 +24,13 @@ export class GridScene extends Phaser.Scene {
     this.load.image('ranger', 'assets/sprites/ranger.png');
     this.load.image('warrior', 'assets/sprites/warrior.png');
     this.load.image('wizzard', 'assets/sprites/wizzard.png');
+
+    // Skill icons
     this.load.image('quickMove', 'assets/sprites/icons/fire-dash.png');
     this.load.image('move', 'assets/sprites/icons/run.png');
+    this.load.image('swing', 'assets/sprites/icons/sword-wound.png');
+
+    // Confirm button
     this.load.image('confirm', 'assets/sprites/icons/play-button.png');
 
     this.load.spritesheet(
@@ -34,6 +39,9 @@ export class GridScene extends Phaser.Scene {
     this.load.spritesheet(
         'base_walk', 'assets/sprites/base_walk.png',
         {frameWidth: 64, frameHeight: 64, endFrame: 2});
+    this.load.spritesheet(
+        'base_attack', 'assets/sprites/base_attack.png',
+        {frameWidth: 64, frameHeight: 64, endFrame: 3});
 
     this.load.spritesheet(
         'slime_idle', 'assets/sprites/slime_idle.png',
@@ -54,7 +62,7 @@ export class GridScene extends Phaser.Scene {
     //     this, 'playerRanger', 'ranger', `5,2`, {skills: ['quickMove']});
 
     const player = new PlayerEntity(
-        this, 'player', 'base_idle', `3,2`, {skills: ['quickMove']});
+        this, 'player', 'base_idle', `3,2`, {skills: ['quickMove', 'swing']});
 
     const slime = new MonsterEntity(this, 'slime', 'slime_idle', `7,2`);
 

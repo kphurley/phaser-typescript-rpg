@@ -1,6 +1,7 @@
 import {PlayerEntity} from '../entities/player/PlayerEntity';
 
 import {Action} from './Action';
+import {AttackAction} from './AttackAction';
 import {MoveAction} from './MoveAction';
 
 function getActionInstance(entity: PlayerEntity, skillName: string): Action {

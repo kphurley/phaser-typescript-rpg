@@ -1,3 +1,4 @@
+import {Action} from '../actions/Action';
 import {GridScene} from '../scenes/GridScene';
 
 import {GridEntity} from './GridEntity';
@@ -43,8 +44,26 @@ export class SpriteEntity extends GridEntity {
       repeat: -1
     };
 
+    const attackConfig = {
+      key: `${this.name}-attack`,
+      frames: this.scene.anims.generateFrameNumbers(
+          'base_attack', {start: 0, end: 3, first: 0}),
+      frameRate: 6,
+      repeat: 0
+    };
+
     this.scene.anims.create(idleConfig);
     this.scene.anims.create(walkConfig);
+    const attackAnim = this.scene.anims.create(attackConfig);
+
+    this.sprite.on('animationcomplete', this.setIdle.bind(this));
+
+    this.scene.events.on('attack', (action: Action) => {
+      if (action.entity === this) {
+        this.setAttacking();
+      }
+    });
+
     this.sprite.anims.play(`${this.name}-idle`);
   }
 
@@ -54,5 +73,9 @@ export class SpriteEntity extends GridEntity {
 
   setWalking() {
     this.sprite.anims.play(`${this.name}-walk`);
+  }
+
+  setAttacking() {
+    this.sprite.anims.play(`${this.name}-attack`);
   }
 }

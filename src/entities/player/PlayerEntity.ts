@@ -27,8 +27,8 @@ export class PlayerEntity extends SpriteEntity {
     // TODO:  Magic numbers, vary X in forEach loop when more skills are added
     const uiContainer = this.scene.add.container(400, 650);
 
-    this.characterConfig.skills.forEach((skillName) => {
-      const button = this.scene.add.sprite(10, 10, skillName);
+    this.characterConfig.skills.forEach((skillName, index) => {
+      const button = this.scene.add.sprite(10 + index * 84, 10, skillName);
       // TODO - Register input handlers on buttons, or provide a hook to do so
       button.setInteractive();
       button.on('pointerdown', () => {

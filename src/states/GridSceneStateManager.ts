@@ -10,15 +10,13 @@ import {GridSceneState} from './GridSceneState';
 import {PlanningGridSceneState} from './PlanningGridSceneState';
 import {ResolveCombatGridSceneState} from './ResolveCombatGridSceneState';
 
-export class GridSceneStateManager extends Phaser.Events.EventEmitter {
+export class GridSceneStateManager {
   activeState: string;
   scene: GridScene;
   stateIDs: string[];
   stateMap: Map<string, GridSceneState>;
 
   constructor(scene: GridScene) {
-    super();
-
     this.scene = scene;
     this.stateIDs = ['planning'];
     this.stateMap = new Map<string, GridSceneState>();

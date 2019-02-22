@@ -37,6 +37,10 @@ export class HexagonGridCell {
     return this.contents.isEmpty();
   }
 
+  isOccupied() {
+    return !this.contents.isEmpty();
+  }
+
   asAxialString(): string {
     return `${this.axialLocation.q},${this.axialLocation.r}`;
   }

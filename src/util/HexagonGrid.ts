@@ -113,25 +113,27 @@ export class HexagonGrid {
       boolean {
     const cellsWithinRange = this.getCellsWithinRangeOf(center, range);
 
-    return cellsWithinRange
-        .filter((cell: string) => {
-          if (!this.cellMap.has(cell)) {
-            return false;
-          }
-
-          return (this.cellMap.get(cell) as HexagonGridCell).isEmpty();
-        })
+    return cellsWithinRange.filter((cell: string) => this.cellMap.has(cell))
         .includes(destination);
   }
 
+  getMonsterEntities(): Entity[] {
+    return this.getEntitiesOfType('MonsterEntity');
+  }
+
   getPlayerEntities(): Entity[] {
+    return this.getEntitiesOfType('PlayerEntity');
+  }
+
+  getEntitiesOfType(entityClass: string): Entity[] {
     const cellMapEntities = [];
 
     for (const [_, hexagonGridCell] of this.cellMap) {
       cellMapEntities.push(hexagonGridCell.contents);
     }
 
-    return cellMapEntities.filter((entity) => entity instanceof PlayerEntity);
+    return cellMapEntities.filter(
+        (entity) => entity.constructor.name === entityClass);
   }
 
   drawPath(path: HexagonGridCell[]): Phaser.Curves.Path {
