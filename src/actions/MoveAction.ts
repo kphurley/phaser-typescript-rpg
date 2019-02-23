@@ -24,8 +24,8 @@ export class MoveAction implements Action {
     this.destination = '';
 
     // TODO - Remove when we have a better way to deserialize JSON
-    //this.config = actionsConfig[this.name];  // tslint:disable-line
-    this.config = {name: "foo", initiative: 50, range: 1}
+    this.config = actionsConfig[this.name];  // tslint:disable-line
+
     // For bubbling up messages to UI
     this.error = undefined;
 
@@ -97,8 +97,8 @@ export class MoveAction implements Action {
 
   execute() {
     for (const [_, cell] of this.entity.scene.hexagonGrid.cellMap) {
-      //cell.sprite.off('pointerdown');
-      //cell.sprite.off('pointerover');
+      cell.sprite.off('pointerdown');
+      cell.sprite.off('pointerover');
     }
 
     this.parameterizedCurve = {t: 0, vec: new Phaser.Math.Vector2()};
