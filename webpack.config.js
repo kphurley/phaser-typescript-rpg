@@ -1,25 +1,23 @@
-var path = require('path')
-var webpack = require('webpack')
-var HtmlWebpackPlugin = require('html-webpack-plugin')
-var BrowserSyncPlugin = require('browser-sync-webpack-plugin')
+const path = require('path');
+const webpack = require('webpack');
+//const HtmlWebpackPlugin = require('html-webpack-plugin');
+const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
 
 // Phaser webpack config
-var phaserModule = path.join(__dirname, '/node_modules/phaser/')
-var phaser = path.join(phaserModule, 'src/phaser.js')
+const phaserModule = path.join(__dirname, '/node_modules/phaser/');
+const phaser = path.join(phaserModule, 'src/phaser.js');
 
-var definePlugin = new webpack.DefinePlugin({
+const definePlugin = new webpack.DefinePlugin({
     __DEV__: JSON.stringify(JSON.parse(process.env.BUILD_DEV || 'true')),
     WEBGL_RENDERER: true, 
     CANVAS_RENDERER: true 
-})
+});
+
+const VueLoaderPlugin = require('vue-loader/lib/plugin')
 
 module.exports = {
-    entry: {
-        app: [
-            path.resolve(__dirname, 'src/main.ts')
-        ],
-        vendor: ['phaser']
-    },
+    mode: 'development',
+    entry: path.resolve(__dirname, 'src/main.ts'),
     devtool: 'cheap-source-map',
     output: {
         pathinfo: true,
@@ -30,38 +28,56 @@ module.exports = {
     watch: true,
     plugins: [
         definePlugin,
-        new webpack.optimize.CommonsChunkPlugin({ name: 'vendor'/* chunkName= */, filename: 'vendor.bundle.js'/* filename= */ }),
-        new HtmlWebpackPlugin({
-            filename: '../index.html',
-            template: './src/index.html',
-            chunks: ['vendor', 'app'],
-            chunksSortMode: 'manual',
-            minify: {
-                removeAttributeQuotes: false,
-                collapseWhitespace: false,
-                html5: false,
-                minifyCSS: false,
-                minifyJS: false,
-                minifyURLs: false,
-                removeComments: false,
-                removeEmptyAttributes: false
-            },
-            hash: false
-        }),
+        // new HtmlWebpackPlugin({
+        //     filename: '../index.html',
+        //     template: './src/index.html',
+        //     chunks: ['vendor', 'app'],
+        //     chunksSortMode: 'manual',
+        //     minify: {
+        //         removeAttributeQuotes: false,
+        //         collapseWhitespace: false,
+        //         html5: false,
+        //         minifyCSS: false,
+        //         minifyJS: false,
+        //         minifyURLs: false,
+        //         removeComments: false,
+        //         removeEmptyAttributes: false
+        //     },
+        //     hash: false
+        // }),
         new BrowserSyncPlugin({
             host: process.env.IP || 'localhost',
             port: process.env.PORT || 3000,
             server: {
                 baseDir: ['./', './build']
             }
-        })
+        }),
+        new VueLoaderPlugin()
     ],
     module: {
         rules: [
+            // {
+            //     test: /\.ts$/,
+            //     loaders: ['babel-loader', 'awesome-typescript-loader'],
+            //     include: path.join(__dirname, 'src'),
+            // },
             {
-                test: /\.ts$/,
-                loaders: ['babel-loader', 'awesome-typescript-loader'],
-                include: path.join(__dirname, 'src'),
+                test: /\.tsx?$/,
+                exclude: /node_modules/,
+                use: [
+                  'babel-loader',
+                  {
+                    loader: 'ts-loader',
+                    options: {
+                      appendTsSuffixTo: [/\.vue$/],
+                      appendTsxSuffixTo: [/\.vue$/]
+                    }
+                  }
+                ]
+            },
+            {
+                test: /\.vue$/,
+                loader: 'vue-loader'
             },
             {
                 test: [/\.vert$/, /\.frag$/],
@@ -78,6 +94,7 @@ module.exports = {
         extensions: ['.ts', '.js', '.json'],
         alias: {
             'phaser': phaser,
+            vue$: 'vue/dist/vue.esm.js'
         }
     }
 }

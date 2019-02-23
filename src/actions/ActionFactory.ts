@@ -8,14 +8,14 @@ export class ActionFactory {
   // and return an instance of the appropriate Action
   private INSTANCE_MAP = {'move': MoveAction, 'quickMove': MoveAction};
 
-  instance: Action;
+  //instance: Action;
 
   constructor(entity: PlayerEntity, skillName: string) {
-    const klass = this.INSTANCE_MAP[skillName];  // tslint:disable-line
-    this.instance = new klass(entity, skillName);
+    //const klass = this.INSTANCE_MAP[skillName];  // tslint:disable-line
+    //this.instance = new klass(entity, skillName);
   }
 
-  getInstance(): Action {
-    return this.instance;
-  }
+  // getInstance(): Action {
+  //   return this.instance;
+  // }
 }

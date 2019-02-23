@@ -1,5 +1,5 @@
 // TODO:  Use this to give the created action states unique IDs
-import uuidv4 from 'uuid/v4'; // tslint:disable-line
+//import uuidv4 from 'uuid/v4'; // tslint:disable-line
 
 import {Action} from '../actions/Action';
 import {PlayerEntity} from '../entities/player/PlayerEntity';
@@ -46,7 +46,7 @@ export class GridSceneStateManager extends Phaser.Events.EventEmitter {
 
     return actions.map(
         (action) =>
-            new ActionGridSceneState(this.scene, action as Action, uuidv4()));
+            new ActionGridSceneState(this.scene, action as Action, "1234"));
   }
 
   configureHandlersAndStateMapFor(actionStates: ActionGridSceneState[]) {

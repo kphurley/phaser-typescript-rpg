@@ -40,10 +40,10 @@ export class PlanningGridSceneState extends GridSceneState {
 
     this.playerEntities.forEach((entity) => {
       const pe = entity as PlayerEntity;
-      pe.sprite.off('pointerdown');
+      //pe.sprite.off('pointerdown');
     });
 
-    this.scene.events.off('skillSelected');
+    //this.scene.events.off('skillSelected');
   }
 
   getActions(): Array<Action|undefined> {
@@ -82,11 +82,11 @@ export class PlanningGridSceneState extends GridSceneState {
     const selectedPlayerEntity = this.selectedEntity as PlayerEntity;
     selectedPlayerEntity.confirmSkillSelection();
 
-    const actionInstance =
-        new ActionFactory(
-            selectedPlayerEntity, this.selectedSkillName as string)
-            .getInstance();
-    selectedPlayerEntity.queueAction(actionInstance);
+    // const actionInstance =
+    //     new ActionFactory(
+    //         selectedPlayerEntity, this.selectedSkillName as string)
+    //         .getInstance();
+    // selectedPlayerEntity.queueAction(actionInstance);
 
     const unconfirmedEntities =
         this.playerEntitiesWithUnconfirmedSkillSelection();
