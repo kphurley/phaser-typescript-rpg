@@ -1,4 +1,4 @@
-import actionsConfig from '../config/actionsConfig.json';
+import moveActionsConfig from '../config/moveActionsConfig.json';
 import {EmptyEntity} from '../entities/EmptyEntity';
 import {PlayerEntity} from '../entities/player/PlayerEntity.js';
 import {SpriteEntity} from '../entities/SpriteEntity';
@@ -23,8 +23,8 @@ export class MoveAction implements Action {
     this.name = name;
     this.destination = '';
 
-    this.config =
-        actionsConfig.find((config: ActionConfig) => config.id === this.name);
+    this.config = moveActionsConfig.find(
+        (config: ActionConfig) => config.id === this.name);
 
     // For bubbling up messages to UI
     this.error = undefined;
@@ -87,6 +87,10 @@ export class MoveAction implements Action {
     const entityAxialLocation = this.entity.location;
     const grid = this.entity.scene.hexagonGrid;
 
+    if ((grid.cellMap.get(destination) as HexagonGridCell).isOccupied()) {
+      return false;
+    }
+
     return grid.isCellWithinRangeOf(
         entityAxialLocation, destination, (this.config as ActionConfig).range);
   }
@@ -96,6 +100,7 @@ export class MoveAction implements Action {
   }
 
   execute() {
+    // TODO:  Convert this to the same event pattern as AttackAction
     for (const [_, cell] of this.entity.scene.hexagonGrid.cellMap) {
       cell.sprite.off('pointerdown');
       cell.sprite.off('pointerover');

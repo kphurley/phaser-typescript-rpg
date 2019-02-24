@@ -1,6 +1,7 @@
 import {PlayerEntity} from '../entities/player/PlayerEntity';
 
 import {Action} from './Action';
+import {AttackAction} from './AttackAction';
 import {MoveAction} from './MoveAction';
 
 function getActionInstance(entity: PlayerEntity, skillName: string): Action {
@@ -8,7 +9,8 @@ function getActionInstance(entity: PlayerEntity, skillName: string): Action {
     case 'move':
     case 'quickMove':
       return new MoveAction(entity, skillName);
-
+    case 'swing':
+      return new AttackAction(entity, skillName);
     default:
       throw new Error('Skill not found, cannot create action instance');
   }
