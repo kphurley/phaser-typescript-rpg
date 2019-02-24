@@ -1,8 +1,14 @@
 import {Entity} from '../entities/Entity';
 
+export interface ActionConfig {
+  id: string;
+  name: string;
+  initiative: number;
+  range: number;
+}
+
 export interface Action {
-  // Extract to class/interface
-  config: {name: string, initiative: number, range: number};
+  config?: ActionConfig;
   entity: Entity;
   error?: string;
 

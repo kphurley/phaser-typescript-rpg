@@ -4,12 +4,12 @@ import {PlayerEntity} from '../entities/player/PlayerEntity.js';
 import {SpriteEntity} from '../entities/SpriteEntity';
 import {HexagonGridCell} from '../util/HexagonGridCell';
 
-import {Action} from './Action';
+import {Action, ActionConfig} from './Action';
 
 export class MoveAction implements Action {
   entity: SpriteEntity;
   name: string;
-  config: {name: string, initiative: number, range: number};
+  config?: ActionConfig;
   destination: string;
   destinationPath?: Phaser.Curves.Path;
   parameterizedCurve?: {t: number, vec: Phaser.Math.Vector2};
@@ -23,8 +23,8 @@ export class MoveAction implements Action {
     this.name = name;
     this.destination = '';
 
-    // TODO - Remove when we have a better way to deserialize JSON
-    this.config = actionsConfig[this.name];  // tslint:disable-line
+    this.config =
+        actionsConfig.find((config: ActionConfig) => config.id === this.name);
 
     // For bubbling up messages to UI
     this.error = undefined;
@@ -88,7 +88,7 @@ export class MoveAction implements Action {
     const grid = this.entity.scene.hexagonGrid;
 
     return grid.isCellWithinRangeOf(
-        entityAxialLocation, destination, this.config.range);
+        entityAxialLocation, destination, (this.config as ActionConfig).range);
   }
 
   isValid() {

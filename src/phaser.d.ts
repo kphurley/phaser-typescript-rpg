@@ -9803,7 +9803,8 @@ declare namespace Phaser {
          * The parsed XML object is returned, or `null` if there was an error while parsing the data.
          * @param data The XML source stored in a string.
          */
-        function ParseXML(data: string): DOMParser | ActiveXObject;
+        //function ParseXML(data: string): DOMParser | ActiveXObject;
+        function ParseXML(data: string): DOMParser;
 
         /**
          * Attempts to remove the element from its parentNode in the DOM.
@@ -9958,7 +9959,7 @@ declare namespace Phaser {
              * @param context Only remove the listeners that have this context.
              * @param once Only remove one-time listeners.
              */
-            off(event: string | symbol, fn: Function, context: any, once: boolean): Phaser.Events.EventEmitter;
+            off(event: string | symbol, fn?: Function, context?: any, once?: boolean): Phaser.Events.EventEmitter;
 
             /**
              * Remove all listeners, or those of the specified event.
