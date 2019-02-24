@@ -1,7 +1,7 @@
 // TODO:  Use this to give the created action states unique IDs
-import uuidv4 from 'uuid/v4'; // tslint:disable-line
+import uuidv4 from 'uuid/v4';
 
-import {Action} from '../actions/Action';
+import {Action, ActionConfig} from '../actions/Action';
 import {PlayerEntity} from '../entities/player/PlayerEntity';
 import {GridScene} from '../scenes/GridScene';
 
@@ -40,8 +40,8 @@ export class GridSceneStateManager extends Phaser.Events.EventEmitter {
     const actions = planningState.getActions();
 
     actions.sort((actionA, actionB) => {
-      return (actionB as Action).config.initiative -
-          (actionA as Action).config.initiative;
+      return ((actionB as Action).config as ActionConfig).initiative -
+          ((actionA as Action).config as ActionConfig).initiative;
     });
 
     return actions.map(

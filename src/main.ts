@@ -1,9 +1,11 @@
 import 'phaser';
-import Vue from 'vue'
-import VueApp from './VueApp.vue'
-//import store from './store'
+
+import Vue from 'vue';
+
+// import store from './store'
 
 import {GridScene} from './scenes/GridScene';
+import VueApp from './VueApp.vue';
 
 const config: GameConfig = {
   type: Phaser.AUTO,
@@ -17,9 +19,8 @@ const config: GameConfig = {
 
 const game = new Phaser.Game(config);
 
-
-new Vue({
+const vue = new Vue({
   el: '#vue-app',
   // store,
   render: h => h(VueApp)
-})
+});

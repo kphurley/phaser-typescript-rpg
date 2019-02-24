@@ -1,12 +1,14 @@
-{
-  "quickMove": {
+[
+  {
+    "id": "quickMove",
     "name": "Quick Move",
     "initiative": 80,
     "range": 3
   },
-  "move": {
+  {
+    "id": "move",
     "name": "Move",
     "initiative": 60,
     "range": 3
   }
-}
+]
