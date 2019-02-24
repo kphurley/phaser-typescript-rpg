@@ -93,7 +93,6 @@ export class AttackAction implements Action {
       (monsterEntity as MonsterEntity).sprite.off('pointerdown');
     });
 
-    console.log('attack emitting...');
     scene.events.emit('attack', this);
     this.complete();
   }
