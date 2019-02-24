@@ -23,8 +23,8 @@ export class MoveAction implements Action {
     this.name = name;
     this.destination = '';
 
-    this.config =
-        actionsConfig.find((config: ActionConfig) => config.id === this.name);
+    this.config = moveActionsConfig.find(
+        (config: ActionConfig) => config.id === this.name);
 
     // For bubbling up messages to UI
     this.error = undefined;

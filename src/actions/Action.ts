@@ -5,6 +5,7 @@ export interface ActionConfig {
   name: string;
   initiative: number;
   range: number;
+  modifier: number;
 }
 
 export interface Action {

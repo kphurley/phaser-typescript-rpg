@@ -3,13 +3,13 @@ import {MonsterEntity} from '../entities/monster/MonsterEntity.js';
 import {SpriteEntity} from '../entities/SpriteEntity';
 import {HexagonGridCell} from '../util/HexagonGridCell';
 
-import {Action} from './Action';
+import {Action, ActionConfig} from './Action';
 
 export class AttackAction implements Action {
   entity: SpriteEntity;
   targetEntity?: SpriteEntity;
   name: string;
-  config: {name: string, initiative: number, range: number, modifier: number};
+  config?: ActionConfig;
 
   error?: string;
 
@@ -20,8 +20,8 @@ export class AttackAction implements Action {
     this.targetEntity = undefined;
     this.name = name;
 
-    // TODO - Remove when we have a better way to deserialize JSON
-    this.config = attackActionsConfig[this.name];  // tslint:disable-line
+    this.config = attackActionsConfig.find(
+        (config: ActionConfig) => config.id === this.name);
 
     // For bubbling up messages to UI
     this.error = undefined;
@@ -76,7 +76,8 @@ export class AttackAction implements Action {
     const targetLocation = (this.targetEntity as SpriteEntity).location;
 
     if (grid.isCellWithinRangeOf(
-            sourceLocation, targetLocation, this.config.range)) {
+            sourceLocation, targetLocation,
+            (this.config as ActionConfig).range)) {
       this.error = undefined;
       return true;
     } else {

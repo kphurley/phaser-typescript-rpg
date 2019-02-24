@@ -1,8 +1,9 @@
-{
-  "swing": {
+[
+  {
+    "id": "swing",
     "name": "Swing",
     "initiative": 90,
     "range": 1,
     "modifier": 1
   }
-}
+]
