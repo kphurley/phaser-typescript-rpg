@@ -22,5 +22,6 @@ const game = new Phaser.Game(config);
 const vue = new Vue({
   el: '#vue-app',
   // store,
+
   render: h => h(VueApp)
 });
