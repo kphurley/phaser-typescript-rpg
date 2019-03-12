@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
+  <head>
     <meta charset="UTF-8">
     <title>Phaser3 - ES6 - Webpack</title>
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
@@ -15,26 +14,13 @@
             margin: 0;
             padding: 0;
         }
-
-        #vue-layer {
-            position: fixed; /* Sit on top of the page content */
-            display: block;
-            width: 100%; /* Full width (cover the whole page) */
-            height: 20%; /* Bottom 20% of page */
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0,0,0,0.5); /* Black background with opacity */
-            z-index: 2;
-            cursor: pointer; /* Add a pointer on hover */
-        }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
     <div id="phaser"></div>
-    <div id="vue-layer">
-        <div id="vue-app"></div>
-    </div>
-<script type="text/javascript" src="./dist/vendor.bundle.js"></script><script type="text/javascript" src="./dist/bundle.js"></script></body>
+    <div id="vue-app"></div>
+
+    <script type="text/javascript" src="./dist/vendor.bundle.js"></script><script type="text/javascript" src="./dist/bundle.js"></script>
+  </body>
 </html>
