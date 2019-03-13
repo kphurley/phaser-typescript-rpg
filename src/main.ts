@@ -1,26 +1,32 @@
 import 'phaser';
 
 import Vue from 'vue';
+import VueRouter from 'vue-router';
+
+import VueApp from './VueApp.vue';
+
+import Game from './components/Game.vue';
+import Login from './components/Login.vue';
+import Menu from './components/Menu.vue';
+import Register from './components/Register.vue';
 
 // import store from './store'
 
-import {GridScene} from './scenes/GridScene';
-import VueApp from './VueApp.vue';
+Vue.use(VueRouter);
 
-const config: GameConfig = {
-  type: Phaser.AUTO,
-  parent: 'phaser',
-  width: window.innerWidth,
-  height: window.innerHeight,
-  resolution: 1,
-  backgroundColor: '#EDEEC9',
-  scene: [GridScene]
-};
+const routes = [
+  { path: '/game', component: Game },
+  { path: '/login', component: Login },
+  { path: '/menu', component: Menu },
+  { path: '/register', component: Register },
+  { path: '/', component: Login }
+];
 
-const game = new Phaser.Game(config);
+const router = new VueRouter({ routes });
 
 const vue = new Vue({
   el: '#vue-app',
+  router,
   // store,
 
   render: h => h(VueApp)
