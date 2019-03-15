@@ -5,13 +5,13 @@
         {{ loginText }}
       </div>
       <div class="container">
-        <input class="full-width-of-parent roboto input" placeholder="Email" type="email" />
+        <input class="full-width-of-parent roboto input" v-model="email" placeholder="Email" type="email" />
       </div>
       <div class="container">
-        <input class="full-width-of-parent roboto input" placeholder="Password" type="password" />
+        <input class="full-width-of-parent roboto input" v-model="password" placeholder="Password" type="password" />
       </div>
       <div class="container centered-horizontally">
-        <button class="roboto submit-button">Submit</button>
+        <button class="roboto submit-button" v-on:click="login">Submit</button>
       </div>
       <div class="container centered-horizontally">
         <router-link to="/register">{{ registerText }}</router-link>
@@ -24,10 +24,20 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 
+import { sessionApi } from '../api/Session';
+
 @Component
 export default class Login extends Vue {
-  loginText: string = "Login";
-  registerText: string = "Register";
+  loginText: string = 'Login';
+  registerText: string = 'Register';
+  email = '';
+  password = '';
+
+  login() {
+    sessionApi.create({ email: this.email, password: this.password })
+    .then((res) => console.log(res.data))
+    .catch(console.error);
+  }
 }
 </script>
 
