@@ -1,4 +1,4 @@
-import axios, {AxiosInstance, AxiosPromise} from 'axios';
+import axios, {AxiosInstance, AxiosPromise, AxiosResponse} from 'axios';
 
 export interface Session {
   jwt: string;
@@ -16,7 +16,10 @@ class SessionProvider {
   }
 
   create(data: {email: string, password: string}): AxiosPromise<Session> {
-    return this.http.post(this.url, data);
+    return this.http.post(this.url, data).then((res) => {
+      localStorage.setItem('jwt', res.data.jwt);
+      return res.data;
+    });
   }
 }
 

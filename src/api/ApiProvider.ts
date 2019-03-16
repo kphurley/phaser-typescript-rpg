@@ -1,4 +1,4 @@
-import axios, {AxiosInstance, AxiosPromise} from 'axios';
+import axios, {AxiosInstance, AxiosPromise, AxiosRequestConfig} from 'axios';
 
 export class ApiProvider<T> {
   private url: string;
@@ -6,18 +6,26 @@ export class ApiProvider<T> {
 
   constructor(url: string) {
     this.url = url;
-    this.http = axios.create({
+
+    const axiosConfig: AxiosRequestConfig = {
       url,
       baseURL: 'http://localhost:4000/api',
-      headers: {'Content-Type': 'application/json'}
-    });
+      headers: {}
+    };
+
+    const token = localStorage.getItem('jwt');
+    if (token) {
+      axiosConfig.headers = {'Authorization': `Bearer ${token}`};
+    }
+
+    this.http = axios.create(axiosConfig);
   }
 
-  login(token: string) {
+  setAuthHeader(token: string) {
     this.http.defaults.headers.common.Authorization = `Bearer ${token}`;
   }
 
-  logout() {
+  clearAuthHeader() {
     this.http.defaults.headers.common.Authorization = '';
   }
 
