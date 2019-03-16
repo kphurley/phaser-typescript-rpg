@@ -8,7 +8,7 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
 
-import {GridScene} from '../scenes/GridScene';
+import {GridScene} from './game/scenes/GridScene';
 
 @Component
 export default class Game extends Vue {

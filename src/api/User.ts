@@ -1,10 +1,14 @@
 import {ApiProvider} from './ApiProvider';
 
+interface Credential {
+  password: string;
+}
+
 export interface User {
-  id: number;
-  email: string;
-  name: string;
-  username: string;
+  user: {
+    id?: number; email: string; name: string; username: string;
+    credential?: Credential;
+  };
 }
 
 export const userApi = new ApiProvider<User>('/users');

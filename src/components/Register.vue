@@ -19,7 +19,7 @@
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="info">Register</v-btn>
+                <v-btn color="info" v-on:click="registerNewUser">Register</v-btn>
                 <v-spacer></v-spacer>
               </v-card-actions>
             </v-card>
@@ -33,11 +33,28 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 
+import { User, userApi } from '../api/User';
+
 @Component
 export default class Register extends Vue {
- name = '';
- username = '';
- email = '';
- password = '';
+  name = '';
+  username = '';
+  email = '';
+  password = '';
+
+  registerNewUser() {
+    const newUserWithPassword = {
+      email: this.email,
+      name: this.name,
+      username: this.username,
+      credential: {
+        password: this.password
+      }
+    }
+
+    userApi.create({ user: newUserWithPassword }).then(() => {
+      this.$router.push('login');
+    }).catch(console.error);
+  }
 }
 </script>
