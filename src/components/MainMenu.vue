@@ -33,6 +33,8 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 
+import { mapActions, mapState } from 'vuex';
+
 import PartyButton from './main_menu/PartyButton.vue';
 import PlayButton from './main_menu/PlayButton.vue';
 import SettingsButton from './main_menu/SettingsButton.vue';
@@ -42,7 +44,20 @@ import SettingsButton from './main_menu/SettingsButton.vue';
     PartyButton,
     PlayButton,
     SettingsButton
-  }
+  },
+
+  methods: mapActions([
+    'fetchMyUser'
+  ])
 })
-export default class MainMenu extends Vue {}
+export default class MainMenu extends Vue {
+  user = '';
+  fetchMyUser!: () => Promise<void>;
+
+  created() {
+    this.fetchMyUser().then(() => {
+      this.user = this.$store.state.userModule.user;
+    });
+  }
+}
 </script>

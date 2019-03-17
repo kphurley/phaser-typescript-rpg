@@ -1,16 +1,8 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 
+import {UserModule} from './UserModule';
+
 Vue.use(Vuex);
 
-const state = {
-  user: null
-};
-
-const getters = {};
-
-const actions = {};
-
-const mutations = {};
-
-export const store = new Vuex.Store({state, getters, actions, mutations});
+export const store = new Vuex.Store({modules: {userModule: UserModule}});

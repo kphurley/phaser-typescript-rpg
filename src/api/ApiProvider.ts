@@ -33,7 +33,11 @@ export class ApiProvider<T> {
     return this.http.get(`${this.url}`);
   }
 
-  get(id: number): AxiosPromise<T> {
+  get(): AxiosPromise<T> {
+    return this.http.get(`${this.url}`);
+  }
+
+  getById(id: number): AxiosPromise<T> {
     return this.http.get(`${this.url}/${id}`);
   }
 
