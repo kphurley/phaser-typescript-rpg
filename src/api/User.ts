@@ -13,10 +13,3 @@ export interface User {
 
 export const userApi = new ApiProvider<User>('/users');
 export const myUserApi = new ApiProvider<User>('/my_user');
-
-/*
-userApi.getAll()
-userApi.get(187)
-userApi.create(user)
-userApi.update(187, user)
-*/
