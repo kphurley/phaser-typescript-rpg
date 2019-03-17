@@ -40,10 +40,14 @@
   },
   "dependencies": {
     "@types/uuid": "^3.4.4",
+    "axios": "^0.18.0",
     "phaser": "3.15.1",
     "uuid": "^3.3.2",
     "vue": "^2.6.7",
     "vue-class-component": "^7.0.1",
-    "vue-router": "^3.0.2"
+    "vue-router": "^3.0.2",
+    "vuetify": "^1.5.6",
+    "vuex": "^3.1.0",
+    "vuex-module-decorators": "^0.9.8"
   }
 }

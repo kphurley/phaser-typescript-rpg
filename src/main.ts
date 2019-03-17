@@ -1,33 +1,29 @@
 import 'phaser';
+import 'vuetify/dist/vuetify.min.css';
 
 import Vue from 'vue';
 import VueRouter from 'vue-router';
+import Vuetify from 'vuetify';
 
+import {router} from './routes';
+import {store} from './store';
 import VueApp from './VueApp.vue';
 
-import Game from './components/Game.vue';
-import Login from './components/Login.vue';
-import Menu from './components/Menu.vue';
-import Register from './components/Register.vue';
-
-// import store from './store'
+Vue.use(Vuetify, {
+  theme: {
+    primary: '#8bc34a',
+    secondary: '#b0bec5',
+    accent: '#8c9eff',
+    error: '#b71c1c'
+  }
+});
 
 Vue.use(VueRouter);
-
-const routes = [
-  { path: '/game', component: Game },
-  { path: '/login', component: Login },
-  { path: '/menu', component: Menu },
-  { path: '/register', component: Register },
-  { path: '/', component: Login }
-];
-
-const router = new VueRouter({ routes });
 
 const vue = new Vue({
   el: '#vue-app',
   router,
-  // store,
+  store,
 
   render: h => h(VueApp)
 });

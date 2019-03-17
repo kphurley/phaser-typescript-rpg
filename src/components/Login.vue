@@ -1,95 +1,71 @@
 <template>
-  <div class="black-background roboto">
-    <div class="centered login">
-      <div class="container login-text centered-horizontally">
-        {{ loginText }}
-      </div>
-      <div class="container">
-        <input class="full-width-of-parent roboto input" placeholder="Email" type="email" />
-      </div>
-      <div class="container">
-        <input class="full-width-of-parent roboto input" placeholder="Password" type="password" />
-      </div>
-      <div class="container centered-horizontally">
-        <button class="roboto submit-button">Submit</button>
-      </div>
-      <div class="container centered-horizontally">
-        <router-link to="/register">{{ registerText }}</router-link>
-      </div>
-    </div>
-  </div>
+   <v-content>
+      <v-container fluid fill-height>
+        <v-layout align-center justify-center>
+          <v-flex xs12 sm8 md4>
+            <v-card class="elevation-12">
+              <v-toolbar dark color="primary">
+                <v-toolbar-title>Login</v-toolbar-title>
+                <v-spacer></v-spacer>
+              </v-toolbar>
+              <v-card-text>
+                <v-form>
+                  <v-text-field prepend-icon="alternate_email" name="login" label="Email" type="text" v-model="email"></v-text-field>
+                  <v-text-field id="password" prepend-icon="lock" name="password" label="Password" type="password" v-model="password"></v-text-field>
+                </v-form>
+              </v-card-text>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="primary" v-on:click="login">
+                  <v-progress-circular
+                    v-if="loading"
+                    indeterminate
+                    color="white"
+                  ></v-progress-circular>
+                  <span v-else>{{ loginText }}</span>
+                </v-btn>
+                <v-spacer></v-spacer>
+              </v-card-actions>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <router-link to="register">{{ registerText }}</router-link>
+                <v-spacer></v-spacer>
+              </v-card-actions>
+            </v-card>
+          </v-flex>
+        </v-layout>
+      </v-container>
+    </v-content>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
 
+import { Session, sessionApi } from '../api/Session';
+
 @Component
 export default class Login extends Vue {
-  loginText: string = "Login";
-  registerText: string = "Register";
+  loginText: string = 'Submit';
+  registerText: string = 'No account?  Register here';
+  email = '';
+  password = '';
+  loading = false;
+
+  login() {
+    if (this.loading) return;
+
+    this.loading = true;
+    sessionApi.create({ email: this.email, password: this.password })
+    .then(() => {
+      this.loading = false;
+      this.$router.push('menu');
+    })
+    .catch(console.error);
+  }
+
+  register() {
+    this.$router.push('register');
+  }
 }
 </script>
-
-<style>
-@import url('https://fonts.googleapis.com/css?family=Roboto');
-
-.black-background {
-  background: black;
-  height: 100%;
-  position: fixed;
-  width: 100%;
-}
-
-.roboto {
-  font-family: 'Roboto', sans-serif;
-}
-
-.centered {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
-.centered-horizontally {
-  text-align: center;
-}
-
-.login {
-  background: green;
-  border-radius: 10px;
-  width: 400px;
-  height: 400px;
-}
-
-.login-text {
-  color: white;
-  font-size: xx-large;
-}
-
-.container {
-  padding: 20px 20px 20px 20px;
-}
-
-.full-width-of-parent {
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-  display: block;
-  padding: 4px;
-  width: 100%;
-  height: 100%;
-  background: #fff;
-  border: solid 1px #666;
-}
-
-.submit-button {
-  font-size: x-large;
-  border-radius: 5px;
-}
-
-.input {
-  font-size: x-large;
-  border-radius: 5px;
-}
-</style>
