@@ -3,6 +3,8 @@ import {PlayerEntity} from '../entities/player/PlayerEntity';
 import {GridSceneStateManager} from '../states/GridSceneStateManager';
 import {HexagonGrid} from '../util/HexagonGrid';
 
+import { vueStore } from '../../../main';
+
 export class GridScene extends Phaser.Scene {
   hexagonGrid: HexagonGrid;
   sceneGraphics!: Phaser.GameObjects.Graphics;
@@ -52,21 +54,12 @@ export class GridScene extends Phaser.Scene {
     this.sceneGraphics = this.add.graphics();
     this.hexagonGrid.renderGrid(this);
 
-    // TODO - Is this the best place to create the entities?
-    // TODO - Extract the 'skills' config someplace else, maybe its own class?
-    // const playerWarrior = new PlayerEntity(
-    //     this, 'playerWarrior', 'warrior', `3,2`, {skills: ['quickMove']});
-    // const playerWizard = new PlayerEntity(
-    //     this, 'playerWizard', 'wizzard', `4,2`, {skills: ['move']});
-    // const playerRanger = new PlayerEntity(
-    //     this, 'playerRanger', 'ranger', `5,2`, {skills: ['quickMove']});
+    console.log(vueStore.state.userModule.user); // Working!
 
     const player = new PlayerEntity(
         this, 'player', 'base_idle', `3,2`, {skills: ['quickMove', 'swing']});
 
     const slime = new MonsterEntity(this, 'slime', 'slime_idle', `7,2`);
-
-    // TODO:  Place enemies on the grid
 
     this.stateManager.init();
   }

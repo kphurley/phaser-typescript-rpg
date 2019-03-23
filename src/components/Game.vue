@@ -12,6 +12,8 @@ import {GridScene} from './game/scenes/GridScene';
 
 @Component
 export default class Game extends Vue {
+  // Right now this is confusing because this Vue component is initializing the game
+  // Which has nothing to do with this template, which is just an action bar
   msg: string = "Hello from VueApp"
 
   mounted () {

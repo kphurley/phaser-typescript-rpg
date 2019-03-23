@@ -27,3 +27,6 @@ const vue = new Vue({
 
   render: h => h(VueApp)
 });
+
+// Export a reference to the vuex store so phaser can use it
+export const vueStore = vue.$store;
