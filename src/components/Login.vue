@@ -52,6 +52,12 @@ export default class Login extends Vue {
   password = '';
   loading = false;
 
+  created() {
+    if (this.$store.state.userModule.user || localStorage.getItem('jwt')) {
+      this.$router.push('menu');
+    }
+  }
+
   login() {
     if (this.loading) return;
 
